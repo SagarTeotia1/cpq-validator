@@ -147,6 +147,7 @@ Header-level fields (when present):
 - `quoteNetPrice_t_c`, `quoteListPrice_t_c`: tolerant numeric match with currency parsing
 - `quoteCurrentDiscount_t_c`: tolerant percentage match
 - `currency_t`, `priceList_t_c`, `status_t`, `createdDate_t`, `expiresOnDate_t_c`, `quoteNameTextArea_t_c`, `incoterm_t_c`, `paymentTerms_t_c`, `orderType_t_c`: exact, fuzzy, or format-agnostic comparisons as appropriate
+- 50+ additional operational attributes (e.g. financing flags, renewal indicators, pricing guidance metrics, workflow status flags, NetApp-specific compliance toggles) are automatically cross-checked when values exist on either side, so missing or divergent meta-data is surfaced alongside financial variances.
 
 Line items (when available on both sides):
 

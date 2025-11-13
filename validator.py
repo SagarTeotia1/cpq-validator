@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, NamedTuple
 
 from config import AppConfig
-from utils import floats_match, strings_equal, strings_close, parse_currency, parse_date, only_digits
+from utils import floats_match, strings_equal, strings_close, parse_currency, parse_date, only_digits, parse_percentage
 
 
 @dataclass
@@ -27,6 +27,204 @@ class ValidationResult:
     details: List[FieldResult] = field(default_factory=list)
     transaction_id: Optional[str] = None
     pdf_filename: Optional[str] = None
+
+
+class ExtendedField(NamedTuple):
+    name: str
+    section: str
+    kind: str  # string, picklist, numeric, currency, percent, bool, date
+    threshold: float = 0.9
+
+
+def _normalize_scalar(value: Any) -> Any:
+    if isinstance(value, dict):
+        for key in ("displayValue", "value", "display", "code", "name"):
+            if key in value and value[key] not in (None, ""):
+                return value[key]
+        if len(value) == 1:
+            return next(iter(value.values()))
+    return value
+
+
+def _to_bool(value: Any) -> Optional[bool]:
+    if isinstance(value, bool):
+        return value
+    if value is None:
+        return None
+    if isinstance(value, (int, float)):
+        if value in (0, 1):
+            return bool(value)
+        return None
+    if isinstance(value, str):
+        normalized = value.strip().lower()
+        if normalized in {"true", "yes", "y", "1", "t"}:
+            return True
+        if normalized in {"false", "no", "n", "0", "f"}:
+            return False
+    return None
+
+
+def _to_float(value: Any) -> Optional[float]:
+    if value is None:
+        return None
+    if isinstance(value, (int, float)):
+        return float(value)
+    return parse_currency(str(value))
+
+
+def _to_percent(value: Any) -> Optional[float]:
+    if value is None:
+        return None
+    if isinstance(value, (int, float)):
+        return float(value)
+    return parse_percentage(str(value))
+
+
+def _to_string(value: Any) -> Optional[str]:
+    if value is None:
+        return None
+    text = str(value).strip()
+    return text or None
+
+
+EXTENDED_FIELDS: List[ExtendedField] = [
+    ExtendedField("pVRSMLevelFlag_t_c", "Header", "bool"),
+    ExtendedField("partnerTermsAndCondition_t_c", "Header", "string"),
+    ExtendedField("validStagesForCurrentProcess_t_c", "Header", "string"),
+    ExtendedField("previousReviewReasons_t_c", "Header", "string"),
+    ExtendedField("copyProcess_t_c", "Header", "bool"),
+    ExtendedField("makeTransition_t_c", "Header", "bool"),
+    ExtendedField("contingencyAllowableValue_t_c", "Header", "string"),
+    ExtendedField("keystoneConfigFlag_t_c", "Header", "bool"),
+    ExtendedField("_tax_isTaxInclusive_t", "Header", "bool"),
+    ExtendedField("lineLockDiscountMessagesJSON_t_c", "Header", "string"),
+    ExtendedField("geoFinanceLeadFlag_t_c", "Header", "bool"),
+    ExtendedField("copyLinesFlag_t_c", "Header", "bool"),
+    ExtendedField("_s_priceScoreSimpleMarginUnitCost_t", "Summary", "numeric"),
+    ExtendedField("test_c", "Header", "bool"),
+    ExtendedField("version_number_createUSDQuote_c", "Header", "string"),
+    ExtendedField("partnerInvokedApproval_t_c", "Header", "bool"),
+    ExtendedField("standardProductMarginUSD_t_c", "Summary", "currency"),
+    ExtendedField("addOnStorageAdded_t_c", "Summary", "bool"),
+    ExtendedField("internalRepApprovalPending_t_c", "Header", "bool"),
+    ExtendedField("contractEntityCompanyCMATName_t_c", "Header", "string"),
+    ExtendedField("qLET_FAQ_HTML_Link_t_c", "Header", "string"),
+    ExtendedField("opptyTerritoryId_t_c", "Header", "string"),
+    ExtendedField("promoExpiryFlag_t_c", "Summary", "bool"),
+    ExtendedField("priceWithinPolicy_t", "Summary", "bool"),
+    ExtendedField("rPHoldNetPriceFlag_t_c", "Summary", "bool"),
+    ExtendedField("copyQuoteInitiatedFlag_t_c", "Header", "bool"),
+    ExtendedField("quoteGuidanceToGreen_t_c", "Summary", "percent"),
+    ExtendedField("salesRepEmailId_t_c", "Header", "string"),
+    ExtendedField("showTPDColumns_t_c", "Summary", "bool"),
+    ExtendedField("quoteTotalCapacityGB_t_c", "Summary", "numeric"),
+    ExtendedField("theZeroMarginSpecial_t_c", "Summary", "bool"),
+    ExtendedField("proposalExists_t", "Summary", "bool"),
+    ExtendedField("_tax_isTaxPresent_t", "Header", "bool"),
+    ExtendedField("legalEntities_t_c", "Header", "picklist"),
+    ExtendedField("lSCLevelUpdate_t_c", "Header", "bool"),
+    ExtendedField("presentedToCustomer_t_c", "Header", "bool"),
+    ExtendedField("chooseYouAction_c", "Header", "string"),
+    ExtendedField("jVGlobalFlag_c", "Header", "bool"),
+    ExtendedField("incumbentVendor_Array_Control_t_c", "Summary", "numeric"),
+    ExtendedField("vPFlagRenewals_t_c", "Header", "bool"),
+    ExtendedField("paymentTermsInitialValue_t_c", "Header", "string"),
+    ExtendedField("dDSIgnoredQuotes_t_c", "Header", "bool"),
+    ExtendedField("addOnQuoteStatusFlag_t_c", "Header", "bool"),
+    ExtendedField("salesRBDLevelFlag_t_c", "Header", "bool"),
+    ExtendedField("partnerCompetencyString_t_c", "Header", "string"),
+    ExtendedField("printAndExportFilename_t_c", "Header", "string"),
+    ExtendedField("runTimeLoggedInUser_t_c", "Header", "string"),
+    ExtendedField("_s_assignedTo_t", "Header", "picklist"),
+    ExtendedField("incotermInitialValue_t_c", "Header", "string"),
+    ExtendedField("fPVREOSLFlag_t_c", "Header", "bool"),
+    ExtendedField("quoteFullStackOnlyNetPrice_t_c", "Summary", "currency"),
+    ExtendedField("dealRegApproved_t_c", "Header", "bool"),
+    ExtendedField("_s_quoteForAgreement_t", "Header", "bool"),
+    ExtendedField("labOnDemandLODHasBeenConsidered_t_c", "Header", "bool"),
+    ExtendedField("_s_priceScoreListBased_t", "Summary", "numeric"),
+    ExtendedField("partDescriptionQletOperator_t_c", "Summary", "picklist"),
+    ExtendedField("keyStone_t_c", "Header", "picklist"),
+    ExtendedField("addonQuoteFlag_t_c", "Header", "bool"),
+    ExtendedField("preBuildQuoteFlag_t_c", "Header", "bool"),
+    ExtendedField("hasManagedServicesParts_t_c", "Header", "bool"),
+    ExtendedField("enterDollarAmount_RawCapacity_t_c", "Summary", "currency"),
+    ExtendedField("fullStackMarginUSD_t_c", "Summary", "currency"),
+    ExtendedField("cAPAccount_t_c", "Header", "string"),
+    ExtendedField("previousQuoteDesiredValuesJSON_t_c", "Header", "string"),
+    ExtendedField("policyViolationRegionLevel_t_c", "Header", "bool"),
+    ExtendedField("defaultRequestDate_t", "Header", "date"),
+    ExtendedField("standardJustificationForm_t_c", "Header", "string"),
+    ExtendedField("customDiscountPresent_t_c", "Summary", "bool"),
+    ExtendedField("standardProductMargin_t_c", "Summary", "currency"),
+    ExtendedField("guidanceToGreenAmount_t_c", "Summary", "currency"),
+    ExtendedField("guidanceToYellowAmount_t_c", "Summary", "currency"),
+    ExtendedField("quoteColorRating_t_c", "Header", "picklist"),
+    ExtendedField("freezePriceFlag_t", "Summary", "bool"),
+    ExtendedField("partialShipAllowedFlag_t", "Header", "bool"),
+    ExtendedField("salesAutoApproverFlag_t_c", "Header", "bool"),
+    ExtendedField("currentUserBuyName_t_c", "Header", "string"),
+    ExtendedField("previousUsersLogin_t_c", "Header", "string"),
+    ExtendedField("quoteStatusSentFlag_t_c", "Header", "bool"),
+    ExtendedField("buySellAvailableOptions_t_c", "Header", "string"),
+    ExtendedField("quoteOwnerSSOId_t_c", "Header", "string"),
+    ExtendedField("gTCRiskMessageString_t_c", "Header", "string"),
+]
+
+
+def _evaluate_extended_field(field: ExtendedField, api_val: Any, doc_val: Any, config: AppConfig) -> tuple[Any, Any, bool]:
+    if field.kind == "bool":
+        api_bool = _to_bool(api_val)
+        doc_bool = _to_bool(doc_val)
+        expected = api_bool
+        found = doc_bool
+        if api_bool is None and doc_bool is None:
+            match = True
+        elif api_bool is not None and doc_bool is not None:
+            match = api_bool == doc_bool
+        else:
+            match = False
+        return expected, found, match
+
+    if field.kind == "currency":
+        api_num = _to_float(api_val)
+        doc_num = _to_float(doc_val)
+        expected = round(api_num, 2) if api_num is not None else None
+        found = round(doc_num, 2) if doc_num is not None else None
+        match = floats_match(api_num, doc_num, config.validation_rules.numeric_tolerance)
+        return expected, found, match
+
+    if field.kind == "numeric":
+        api_num = _to_float(api_val)
+        doc_num = _to_float(doc_val)
+        expected = api_num
+        found = doc_num
+        match = floats_match(api_num, doc_num, config.validation_rules.numeric_tolerance)
+        return expected, found, match
+
+    if field.kind == "percent":
+        api_pct = _to_percent(api_val)
+        doc_pct = _to_percent(doc_val)
+        expected = round(api_pct, 2) if api_pct is not None else None
+        found = round(doc_pct, 2) if doc_pct is not None else None
+        match = floats_match(api_pct, doc_pct, config.validation_rules.percentage_tolerance)
+        return expected, found, match
+
+    if field.kind == "date":
+        api_date = parse_date(api_val)
+        doc_date = parse_date(doc_val)
+        expected = api_val
+        found = doc_val
+        match = api_date == doc_date if (api_date is not None or doc_date is not None) else True
+        return expected, found, match
+
+    # Default string / picklist comparison
+    api_str = _to_string(api_val)
+    doc_str = _to_string(doc_val)
+    expected = api_str
+    found = doc_str
+    match = strings_close(api_str, doc_str, threshold=field.threshold)
+    return expected, found, match
 
 
 def validate_quote(config: AppConfig, api_data: Dict[str, Any], pdf_data: Dict[str, Any], *, transaction_id: Optional[str] = None, pdf_filename: Optional[str] = None) -> ValidationResult:
@@ -370,6 +568,25 @@ def validate_quote(config: AppConfig, api_data: Dict[str, Any], pdf_data: Dict[s
                     match=floats_match(api_parsed, pdf_parsed, tolerance) if (api_parsed is not None and pdf_parsed is not None) else False,
                 )
             )
+
+    # Extended attribute coverage (50+ additional validations)
+    for ext_field in EXTENDED_FIELDS:
+        api_raw = api_data.get(ext_field.name)
+        pdf_raw = pdf_data.get(ext_field.name)
+        api_val = _normalize_scalar(api_raw)
+        pdf_val = _normalize_scalar(pdf_raw)
+        if api_val is None and pdf_val is None:
+            continue
+        expected, found, match = _evaluate_extended_field(ext_field, api_val, pdf_val, config)
+        results.append(
+            FieldResult(
+                field_name=ext_field.name,
+                section=ext_field.section,
+                expected=expected,
+                found=found,
+                match=match,
+            )
+        )
 
     # Line items (optional)
     validate_line_items(config, api_data, pdf_data, results)

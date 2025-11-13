@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "source_file": "174044_12-Nov-2025_13-47-19_Quote174044forArrowElectronicsInc..xls",
+    "source_type": "excel",
+    "generated_at": "2025-11-13T14:06:32.041562Z",
+    "field_count": 24,
+    "line_item_count": 0
+  },
+  "header_fields": {
+    "quoteNumber_t_c": "174044",
+    "quoteNameTextArea_t_c": "174044 for Arrow Electronics Inc.",
+    "createdDate_t": "12-Nov-2025",
+    "expiresOnDate_t_c": "12-Dec-2025",
+    "status_t": "Configured",
+    "incoterm_t_c": "Quote Name:",
+    "orderType_t_c": null,
+    "paymentTerms_t_c": null,
+    "priceList_t_c": "NA-CAD",
+    "currency_t": null,
+    "freightTerms_t_c": null,
+    "contractName_t": "AVT Technology Solutions-Tech Data Government Solutions_MASTER Distributor Agmt Payment Terms: 0.5% 10, NET 30 Terms and Conditions This quote is presented for budgetary purposes only. All net prices and discounts are estimated values only and are subject to change. A budgetary quote cannot be used as the basis for valid purchase order. All amounts are in Canadian Dollar ($) Price List: NA-CAD Date Printed: 12-Nov-2025 Page: 1 of 1",
+    "contractStartDate_t": null,
+    "contractEndDate_t": null,
+    "lastUpdatedDate_t": null,
+    "lastUpdatedBy_t": null,
+    "sellingMotion_t_c": null,
+    "district_t_c": null,
+    "quoteListPrice_t_c": 77658.39,
+    "quoteCurrentDiscount_t_c": 24.04,
+    "quoteNetPrice_t_c": 77390.93,
+    "extNetPrice_t_c": null,
+    "quoteDesiredNetPrice_t_c": null,
+    "quoteDesiredDiscount_t_c": null
+  },
+  "line_items": []
+}

@@ -1,10 +1,10 @@
 {
   "overall_status": "FAILED",
-  "total_checked": 27,
+  "total_checked": 107,
   "matches": 10,
-  "mismatches": 17,
+  "mismatches": 97,
   "transaction_id": "481931730",
-  "excel_filename": "174044_12-Nov-2025_13-47-19_Quote174044forArrowElectronicsInc..xls",
+  "pdf_filename": "174044_12-Nov-2025_13-47-19_Quote174044forArrowElectronicsInc..xls",
   "details": [
     {
       "field_name": "quoteNumber_t_c",
@@ -12,6 +12,7 @@
       "expected": "174044",
       "found": "174044",
       "match": true,
+      "page": null,
       "message": null
     },
     {
@@ -20,6 +21,7 @@
       "expected": "CPQ-174044",
       "found": null,
       "match": false,
+      "page": null,
       "message": null
     },
     {
@@ -28,6 +30,7 @@
       "expected": 77390.93,
       "found": 77390.93,
       "match": true,
+      "page": null,
       "message": null
     },
     {
@@ -36,6 +39,7 @@
       "expected": 101880.85,
       "found": 77658.39,
       "match": false,
+      "page": null,
       "message": "CRITICAL: List Grand Total validation (Unit prices sum to this)"
     },
     {
@@ -44,6 +48,7 @@
       "expected": 77390.93,
       "found": 77390.93,
       "match": true,
+      "page": null,
       "message": null
     },
     {
@@ -52,6 +57,7 @@
       "expected": 77390.93,
       "found": 77390.93,
       "match": true,
+      "page": null,
       "message": null
     },
     {
@@ -60,6 +66,7 @@
       "expected": 24.04,
       "found": 24.04,
       "match": true,
+      "page": null,
       "message": null
     },
     {
@@ -68,6 +75,7 @@
       "expected": "CAD",
       "found": null,
       "match": false,
+      "page": null,
       "message": null
     },
     {
@@ -76,6 +84,7 @@
       "expected": "NA-CAD",
       "found": "NA-CAD",
       "match": true,
+      "page": null,
       "message": null
     },
     {
@@ -84,6 +93,7 @@
       "expected": "Configured",
       "found": "Configured",
       "match": true,
+      "page": null,
       "message": null
     },
     {
@@ -92,6 +102,7 @@
       "expected": "2025-11-12",
       "found": "12-Nov-2025",
       "match": true,
+      "page": null,
       "message": null
     },
     {
@@ -100,6 +111,7 @@
       "expected": "2025-12-12",
       "found": "12-Dec-2025",
       "match": true,
+      "page": null,
       "message": null
     },
     {
@@ -108,6 +120,7 @@
       "expected": "EXW Laredo, TX",
       "found": "Quote Name:",
       "match": false,
+      "page": null,
       "message": null
     },
     {
@@ -116,6 +129,7 @@
       "expected": "0.5% 10, NET 30",
       "found": null,
       "match": false,
+      "page": null,
       "message": null
     },
     {
@@ -124,6 +138,7 @@
       "expected": "Standard",
       "found": null,
       "match": false,
+      "page": null,
       "message": null
     },
     {
@@ -132,6 +147,7 @@
       "expected": "Quote 174044 for Arrow Electronics Inc.",
       "found": "174044 for Arrow Electronics Inc.",
       "match": true,
+      "page": null,
       "message": null
     },
     {
@@ -140,6 +156,7 @@
       "expected": "CAD",
       "found": null,
       "match": false,
+      "page": null,
       "message": null
     },
     {
@@ -148,6 +165,7 @@
       "expected": "Collect",
       "found": null,
       "match": false,
+      "page": null,
       "message": null
     },
     {
@@ -156,6 +174,7 @@
       "expected": "Agreement for 11/12 Arrow Electronics Inc.-Opp-201981123-Checking NA Reseller Login",
       "found": "AVT Technology Solutions-Tech Data Government Solutions_MASTER Distributor Agmt Payment Terms: 0.5% 10, NET 30 Terms and Conditions This quote is presented for budgetary purposes only. All net prices and discounts are estimated values only and are subject to change. A budgetary quote cannot be used as the basis for valid purchase order. All amounts are in Canadian Dollar ($) Price List: NA-CAD Date Printed: 12-Nov-2025 Page: 1 of 1",
       "match": false,
+      "page": null,
       "message": null
     },
     {
@@ -164,6 +183,7 @@
       "expected": "2025-11-12",
       "found": null,
       "match": false,
+      "page": null,
       "message": null
     },
     {
@@ -172,6 +192,7 @@
       "expected": "2025-11-12T15:01:00Z",
       "found": null,
       "match": false,
+      "page": null,
       "message": null
     },
     {
@@ -180,6 +201,7 @@
       "expected": "NA Reseller1",
       "found": null,
       "match": false,
+      "page": null,
       "message": null
     },
     {
@@ -188,6 +210,7 @@
       "expected": "NetApp to Distributor",
       "found": null,
       "match": false,
+      "page": null,
       "message": null
     },
     {
@@ -196,6 +219,7 @@
       "expected": "AM-Four Corners District",
       "found": null,
       "match": false,
+      "page": null,
       "message": null
     },
     {
@@ -204,6 +228,7 @@
       "expected": 77390.93,
       "found": null,
       "match": false,
+      "page": null,
       "message": null
     },
     {
@@ -212,6 +237,7 @@
       "expected": 77390.93,
       "found": null,
       "match": false,
+      "page": null,
       "message": null
     },
     {
@@ -220,6 +246,727 @@
       "expected": 24.04,
       "found": null,
       "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "pVRSMLevelFlag_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "partnerTermsAndCondition_t_c",
+      "section": "Header",
+      "expected": "\"Alle Preise sind in Swiss Francs angegeben.\nS\ufffdmtliche Preise von NetApp verstehen sich zuz\ufffdglich etwaig anfallender Steuern und Geb\ufffdhren, insbesondere der jeweilig g\ufffdltigen gesetzlichen Mehrwertsteuer.\"",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "validStagesForCurrentProcess_t_c",
+      "section": "Header",
+      "expected": "QUOTE",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "previousReviewReasons_t_c",
+      "section": "Header",
+      "expected": "UpToDate",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "copyProcess_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "makeTransition_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "contingencyAllowableValue_t_c",
+      "section": "Header",
+      "expected": "None",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "keystoneConfigFlag_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "_tax_isTaxInclusive_t",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "lineLockDiscountMessagesJSON_t_c",
+      "section": "Header",
+      "expected": "{}",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "geoFinanceLeadFlag_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "copyLinesFlag_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "_s_priceScoreSimpleMarginUnitCost_t",
+      "section": "Summary",
+      "expected": 1.0,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "test_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "version_number_createUSDQuote_c",
+      "section": "Header",
+      "expected": "1",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "partnerInvokedApproval_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "standardProductMarginUSD_t_c",
+      "section": "Summary",
+      "expected": 52403.42,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "addOnStorageAdded_t_c",
+      "section": "Summary",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "internalRepApprovalPending_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "contractEntityCompanyCMATName_t_c",
+      "section": "Header",
+      "expected": "Tech Data Corp.",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "qLET_FAQ_HTML_Link_t_c",
+      "section": "Header",
+      "expected": "&#160;",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "opptyTerritoryId_t_c",
+      "section": "Header",
+      "expected": "0MI8c000000DMj9GAG",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "promoExpiryFlag_t_c",
+      "section": "Summary",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "priceWithinPolicy_t",
+      "section": "Summary",
+      "expected": true,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "rPHoldNetPriceFlag_t_c",
+      "section": "Summary",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "copyQuoteInitiatedFlag_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "quoteGuidanceToGreen_t_c",
+      "section": "Summary",
+      "expected": 66.6,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "salesRepEmailId_t_c",
+      "section": "Header",
+      "expected": "na_reseller@ntapotptst.com",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "showTPDColumns_t_c",
+      "section": "Summary",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "quoteTotalCapacityGB_t_c",
+      "section": "Summary",
+      "expected": 48000.0,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "theZeroMarginSpecial_t_c",
+      "section": "Summary",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "proposalExists_t",
+      "section": "Summary",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "_tax_isTaxPresent_t",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "legalEntities_t_c",
+      "section": "Header",
+      "expected": "NetApp Inc.",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "lSCLevelUpdate_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "presentedToCustomer_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "chooseYouAction_c",
+      "section": "Header",
+      "expected": "<p>&nbsp;</p>",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "jVGlobalFlag_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "incumbentVendor_Array_Control_t_c",
+      "section": "Summary",
+      "expected": 0.0,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "vPFlagRenewals_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "paymentTermsInitialValue_t_c",
+      "section": "Header",
+      "expected": "0.5% 10 NET 30",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "dDSIgnoredQuotes_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "addOnQuoteStatusFlag_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "salesRBDLevelFlag_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "partnerCompetencyString_t_c",
+      "section": "Header",
+      "expected": "{}",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "printAndExportFilename_t_c",
+      "section": "Header",
+      "expected": "174044_12-Nov-2025_13-47-19_Quote 174044 for Arrow Electronics Inc.",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "runTimeLoggedInUser_t_c",
+      "section": "Header",
+      "expected": "BuyAccess",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "_s_assignedTo_t",
+      "section": "Header",
+      "expected": "Seller",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "incotermInitialValue_t_c",
+      "section": "Header",
+      "expected": "EXW LAREDO TX",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "fPVREOSLFlag_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "quoteFullStackOnlyNetPrice_t_c",
+      "section": "Summary",
+      "expected": 18399.38,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "dealRegApproved_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "_s_quoteForAgreement_t",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "labOnDemandLODHasBeenConsidered_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "_s_priceScoreListBased_t",
+      "section": "Summary",
+      "expected": 1.0,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "partDescriptionQletOperator_t_c",
+      "section": "Summary",
+      "expected": "Equals",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "keyStone_t_c",
+      "section": "Header",
+      "expected": "No",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "addonQuoteFlag_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "preBuildQuoteFlag_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "hasManagedServicesParts_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "enterDollarAmount_RawCapacity_t_c",
+      "section": "Summary",
+      "expected": 0.0,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "fullStackMarginUSD_t_c",
+      "section": "Summary",
+      "expected": 70802.8,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "cAPAccount_t_c",
+      "section": "Header",
+      "expected": "Critical cases for these accounts leading sales for additional discount, 0$ PVR / 100% discount",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "previousQuoteDesiredValuesJSON_t_c",
+      "section": "Header",
+      "expected": "{\"quoteDesiredDiscount_t_c\":24.04,\"quoteDesiredNetPrice_t_c\":77390.93}",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "policyViolationRegionLevel_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "defaultRequestDate_t",
+      "section": "Header",
+      "expected": "2025-11-12",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "standardJustificationForm_t_c",
+      "section": "Header",
+      "expected": "<div class='quote-message '></div>",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "customDiscountPresent_t_c",
+      "section": "Summary",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "standardProductMargin_t_c",
+      "section": "Summary",
+      "expected": 52403.42,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "guidanceToGreenAmount_t_c",
+      "section": "Summary",
+      "expected": 34023.04,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "guidanceToYellowAmount_t_c",
+      "section": "Summary",
+      "expected": 30198.18,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "quoteColorRating_t_c",
+      "section": "Header",
+      "expected": "Green",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "freezePriceFlag_t",
+      "section": "Summary",
+      "expected": true,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "partialShipAllowedFlag_t",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "salesAutoApproverFlag_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "currentUserBuyName_t_c",
+      "section": "Header",
+      "expected": "NA",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "previousUsersLogin_t_c",
+      "section": "Header",
+      "expected": "km87158",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "quoteStatusSentFlag_t_c",
+      "section": "Header",
+      "expected": false,
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "buySellAvailableOptions_t_c",
+      "section": "Header",
+      "expected": "distributorPrice",
+      "found": null,
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "gTCRiskMessageString_t_c",
+      "section": "Header",
+      "expected": "This quote has an identified GTC risk. It will be reviewed and cleared by the GTC team. No action is required by you. You can issue this quote to your customer. You will not be allowed to book the quote until this GTC risk is cleared",
+      "found": null,
+      "match": false,
+      "page": null,
       "message": null
     }
   ]
