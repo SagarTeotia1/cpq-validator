@@ -1,0 +1,18 @@
+[
+  {
+    "quoteNumber_t_c": "174044",
+    "quoteNameTextArea_t_c": "174044 for Arrow Electronics Inc.",
+    "createdDate_t": "12-Nov-2025",
+    "expiresOnDate_t_c": "12-Dec-2025",
+    "status_t": "Configured",
+    "incoterm_t_c": "Quote Name:",
+    "orderType_t_c": null,
+    "paymentTerms_t_c": null,
+    "priceList_t_c": "NA-CAD",
+    "quoteListPrice_t_c": 77658.39,
+    "quoteCurrentDiscount_t_c": 24.04,
+    "quoteNetPrice_t_c": 77390.93,
+    "line_items": [],
+    "_filename": "174044_12-Nov-2025_13-47-19_Quote174044forArrowElectronicsInc..xls"
+  }
+]

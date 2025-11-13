@@ -1,0 +1,1306 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:FunctionUtil="com.bm.xchange.services.templateengine.utils.TeFunctionUtil" xmlns:xfc="http://www.xmlmind.com/foconverter/xsl/extensions" xmlns:PrintUtil="com.bm.xchange.services.templateengine.utils.TePrintUtil" xmlns:axf="http://www.antennahouse.com/names/XSL/Extensions" xmlns:HeadingUtil="com.bm.xchange.services.templateengine.headingstyle.TeHeadingStyleUtil" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<head>
+<style>/* ============================================   NETAPP QUOTE STYLESHEET - Enhanced Version   Industry-Standard CSS Architecture      QUICK REFERENCE - HOW TO MAKE CHANGES:      GLOBAL CHANGES (affects everything):   - Edit :root variables below   - Example: Change --color-border-medium to change all table borders      TABLE-SPECIFIC CHANGES (affects one table):   - Find the table class (.table-quote-header, .table-line-items, etc.)   - Override the CSS variable for that table only   - Example: .table-line-items with custom border color      CELL-SPECIFIC CHANGES (affects one cell):   - Add utility class to the TD element   - Example: class="cell-no-border text-bold"      TABLE CLASSES INDEX:   Line ~2084:  .table-quote-header  - Quote header information   Line ~2102:  .table-account-info  - Account/address details     Line ~2523+: .table-line-items    - Product line items (multiple)   Various:     .table-summary       - Totals and summaries      UTILITY CLASSES (621 usages of style="font-weight: bold" can use .text-bold):   .text-bold, .text-normal, .text-center, .text-right, .text-left   .cell-padding-standard (replaces 1554)   .cell-no-border, .cell-border-bold   ============================================ *//* ============================================   CSS VARIABLES - SINGLE SOURCE OF TRUTH   Change these values to update styling globally   ============================================ */:root {    /* Colors */    --color-primary: #0067C5;    --color-text: #000000;    --color-border-light: #cccccc;    --color-border-medium: #949494;    --color-border-dark: #000000;    --color-bg-light: #f5f5f5;    --color-bg-header: #E1E1E1;        /* Spacing */    --padding-cell-standard: 4px 0px;    --padding-cell-compact: 2px 0px;    --padding-cell-wide: 4px 8px;    --padding-base: 4px;    --margin-section: 18px;        /* Typography */    --font-family-primary: Helvetica, Arial, sans-serif;    --font-family-mono: monospace;    --font-size-header-1: 20px;    --font-size-header-2: 18px;    --font-size-header-3: 16px;    --font-size-header-4: 14px;    --font-size-body: 12pt;    --font-size-cell: 8pt;        /* Borders */    --border-width-standard: 1px;    --border-width-bold: 2px;    --border-style: solid;        /* Table defaults (can be overridden per table) */    --table-border-color: var(--color-border-medium);    --table-border: var(--border-width-standard) var(--border-style) var(--table-border-color);    --table-padding: var(--padding-cell-standard);}/* Base Styles */body {     font-family: var(--font-family-primary);    margin: 0.5in;     padding: 0;    background-color: white;    color: var(--color-text);    font-size: var(--font-size-body);    line-height: 1.4;}/* ============================================   TABLE ARCHITECTURE   ============================================ */table {    border-collapse: collapse;    width: 100%;    margin-bottom: var(--margin-section);    font-family: var(--font-family-primary);    table-layout: fixed;}/* Simple nested table handling */td table {    margin-bottom: 0;}td {    padding: var(--table-padding);    border: var(--table-border);    font-size: var(--font-size-cell);    font-family: var(--font-family-primary);    vertical-align: top;    /* Removed word-wrap for terms and conditions */}th {    background-color: var(--color-bg-light);    color: var(--color-text);    padding: var(--padding-base);    font-weight: bold;    text-align: left;    font-size: var(--font-size-cell);    border: var(--table-border);}/* ============================================   TABLE-SPECIFIC OVERRIDES   ============================================ */.table-quote-header {    --table-border-color: transparent;    margin-bottom: 20px;}.table-quote-header td { border: none; padding: var(--padding-base); }.table-account-info td { padding: var(--padding-cell-standard); }.table-line-items { --table-border-color: var(--color-border-dark); }.table-line-items td { border: var(--border-width-standard) var(--border-style) var(--color-border-dark); }.table-summary { margin-top: 20px; }.table-summary .row-total {    border-top: var(--border-width-bold) var(--border-style) var(--color-border-dark);    border-bottom: var(--border-width-bold) var(--border-style) var(--color-border-dark);    font-weight: bold;}.header-table {    width: 100%;    border-collapse: collapse;    margin-bottom: 20px;}.header-table td {    padding: var(--padding-cell-standard);    vertical-align: top;    border: none;}/* ============================================   CELL UTILITY CLASSES   Use these for individual cell customization   Example: class="cell-no-border text-bold"   ============================================ */.cell-padding-standard { padding: var(--padding-cell-standard); }.cell-padding-compact { padding: var(--padding-cell-compact); }.cell-padding-wide { padding: var(--padding-cell-wide); }.cell-no-padding { padding: 0; }.cell-no-border { border: none !important; }.cell-border-top { border-top: var(--table-border); }.cell-border-bottom { border-bottom: var(--table-border); }.cell-border-bold { border: var(--border-width-bold) var(--border-style) var(--color-border-dark) !important; }/* ============================================   TEXT UTILITY CLASSES   Replaces 621 inline style="font-weight: bold"   ============================================ */.text-bold, .bold { font-weight: bold; }.text-normal, .normal { font-weight: normal; }.text-center, .center, .align-center { text-align: center; }.text-right, .right, .align-right { text-align: right; }.text-left, .left, .align-left { text-align: left; }.text-small, .small { font-size: 8px; }.text-medium, .medium { font-size: 10px; }.text-large, .large { font-size: var(--font-size-body); }/* ============================================   TYPOGRAPHY CLASSES   ============================================ */.table-header-1, .th1 {    font-size: var(--font-size-header-1);    font-weight: bold;    color: var(--color-text);    font-family: var(--font-family-primary);    line-height: 1.3;    padding: 8px;    text-align: left;}.table-header-2, .th2 {    font-size: var(--font-size-header-2);    font-weight: bold;    color: var(--color-text);    font-family: var(--font-family-primary);    line-height: 1.3;    padding: 6px;    text-align: left;}.table-header-3, .th3 {    font-size: var(--font-size-header-3);    font-weight: bold;    color: var(--color-text);    font-family: var(--font-family-primary);    line-height: 1.3;    padding: var(--padding-base);    text-align: center;    background-color: var(--color-bg-light);    border: var(--border-width-standard) var(--border-style) var(--color-border-light);}.table-header-4, .th4 {    font-size: var(--font-size-header-4);    font-weight: bold;    color: var(--color-text);    font-family: var(--font-family-primary);    line-height: 1.3;    padding: var(--padding-base);    text-align: left;}.text-8pt { font-size: 8pt; font-family: var(--font-family-primary); color: var(--color-text); }.text-8pt-bold { font-size: 8pt; font-family: var(--font-family-primary); color: var(--color-text); font-weight: bold; }.text-11pt-bold { font-size: 11pt; font-weight: bold; color: var(--color-text); font-family: var(--font-family-primary); }.text-12pt { font-size: 12pt; font-family: var(--font-family-primary); color: var(--color-text); }.text-12pt-bold { font-size: 12pt; font-weight: bold; font-family: var(--font-family-primary); color: var(--color-text); }/* ============================================   SEMANTIC CONTENT CLASSES   ============================================ */.label-text {    font-size: 8pt;    font-weight: normal;    color: var(--color-text);    font-family: var(--font-family-primary);    line-height: 1.2;    padding: var(--padding-base);}.data-text {    font-size: 8pt;    font-weight: normal;    color: var(--color-text);    font-family: var(--font-family-primary);    line-height: 1.2;    padding: var(--padding-base);}.table-cell-header, .table-header-bold {    font-size: 8pt;    font-weight: bold;    color: var(--color-text);    font-family: var(--font-family-primary);    line-height: 1.0;    padding: var(--padding-base);}.address-content {    font-family: var(--font-family-primary);    font-size: 8pt;    line-height: 11pt;    color: var(--color-text);}.item-description, .configuration-comment {    font-family: var(--font-family-primary);    font-size: 8pt;    color: var(--color-text);}.section-title, .system-header {    font-family: var(--font-family-primary);    font-size: 12pt;    font-weight: bold;    color: var(--color-text);    margin: 15px 0 10px 0;    padding: var(--padding-base) 0;    border-bottom: var(--border-width-standard) var(--border-style) var(--color-border-medium);}.configuration-number {    font-size: 12pt;    font-weight: bold;    color: var(--color-text);    font-family: var(--font-family-primary);}/* ============================================   PRICING CLASSES   ============================================ */.price, .price-content, .price-detail {    text-align: right;    font-family: var(--font-family-primary);    font-size: 8pt;    color: var(--color-text);}.price-value {    color: var(--color-text);    font-size: 12pt;    font-family: var(--font-family-primary);    font-weight: bold;}.currency {    text-align: right;    font-family: var(--font-family-mono);    font-weight: normal;}.table-data-numeric, .td-numeric {    font-size: 10px;    color: var(--color-text);    text-align: right;    padding: var(--padding-base);    font-family: var(--font-family-mono);}.total-line {    font-family: var(--font-family-primary);    font-size: 12pt;    color: var(--color-text);    margin: 10px 0;    text-align: right;}/* ============================================   NETAPP BRANDING   ============================================ */.netapp-blue { color: var(--color-primary); }.netapp-bg-blue { background-color: var(--color-primary); color: white; }.document-title {    font-family: var(--font-family-primary);    font-size: 20pt;    font-weight: bold;    color: var(--color-text);    line-height: 30pt;    margin: 0;}.netapp-logo { height: 40px; width: 195px; }/* ============================================   LAYOUT AND SPACING   ============================================ */.mb-1 { margin-bottom: 8px; }.mb-2 { margin-bottom: 16px; }.mt-1 { margin-top: 8px; }.mt-2 { margin-top: 16px; }.page-header { margin-bottom: 20px; padding: 0; border: none; background: white; }.page-footer {     margin-top: 20px;    padding-top: 10px;    border-top: 0.5pt var(--border-style) var(--color-text);    font-family: var(--font-family-primary);    font-size: 8pt;    text-align: center;}.footer-currency { font-weight: bold; font-size: 10pt; line-height: 10pt; margin-bottom: 5px; }.footer-details { text-align: left; line-height: 8pt; white-space: pre; }/* Terms and Conditions - No Word Wrap - Excel Compatible */.small-text {    white-space: nowrap !important;    word-wrap: normal !important;    overflow-wrap: normal !important;    word-break: normal !important;    font-size: 10pt !important;    font-family: Arial, sans-serif !important;    line-height: 12pt !important;}/* Terms and Conditions containers */.table-body-content {    white-space: nowrap !important;    overflow: visible !important;    width: 100% !important;}/* Force no wrapping for terms text */span[background-style*="helvetica"] {    white-space: nowrap !important;    display: inline-block !important;    width: auto !important;}.logo-cell { width: 200px; text-align: left; }.title-cell { width: 400px; text-align: center; }.empty-cell { width: 100px; }.quote-info-cell { text-align: right; width: 300px; }/* New header structure classes */.col-200 { width: 200px; }.col-400 { width: 400px; }.col-100 { width: 100px; }.logo-container { text-align: left; vertical-align: middle; }.logo-img { width: 200px; height: 0.7in; object-fit: scale-down; }.text-center { text-align: center; vertical-align: middle; }.header { font-family: Helvetica; font-size: 20px; font-weight: bold; color: #0067C5; }/* ============================================   UNIVERSAL TABLE BORDERS - IMPORTANT OVERRIDE   All tables and cells must have borders   ============================================ *//* Force all tables to have borders regardless of class */table, .table-container-borderless {    border-collapse: collapse !important;    border: 1px solid #949494 !important;}/* Force all table cells to have borders regardless of class */td, th, .table-container-borderless td, .table-container-borderless th {    border: 1px solid #949494 !important;    padding: 4px !important;}/* Exception: Only header table should remain borderless */.header-table, .header-table td {    border: none !important;}/* ============================================   SIMPLE TABLE SPACING   Add space between table sections   ============================================ *//* Simple approach: Add bottom padding to all cells with nested tables */td[colspan="7"] {    padding-bottom: 20px !important;}.border-total {    border-top: var(--border-width-bold) var(--border-style) var(--color-border-dark);    border-bottom: var(--border-width-bold) var(--border-style) var(--color-border-dark);    border-left: var(--border-width-standard) var(--border-style) var(--color-border-medium);    border-right: var(--border-width-standard) var(--border-style) var(--color-border-medium);}.border-light { border: var(--border-width-standard) var(--border-style) var(--color-border-medium); }.border-header {    border-top: var(--border-width-standard) var(--border-style) var(--color-border-medium);    border-bottom: var(--border-width-standard) var(--border-style) var(--color-border-medium);}th, td[border-top*="2px solid #000000"] {    border: var(--border-width-bold) var(--border-style) var(--color-border-dark) !important;}thead td, td[style*="font-weight: bold"], td[style*="background-color:#E1E1E1"] {    border: var(--border-width-standard) var(--border-style) var(--color-border-medium) !important;}/* ============================================   COLUMN LAYOUTS   ============================================ */table col:nth-child(1) { width: 12%; }table col:nth-child(2) { width: 28%; }table col:nth-child(3) { width: 8%; }table col:nth-child(4) { width: 13%; }table col:nth-child(5) { width: 8%; }table col:nth-child(6) { width: 13%; }table col:nth-child(7) { width: 18%; }table:has(col:nth-child(2):not(:nth-child(3))) col:nth-child(1) { width: 35%; }table:has(col:nth-child(2):not(:nth-child(3))) col:nth-child(2) { width: 65%; }table:has(col:nth-child(4):not(:nth-child(5))) col:nth-child(1) { width: 20%; }table:has(col:nth-child(4):not(:nth-child(5))) col:nth-child(2) { width: 30%; }table:has(col:nth-child(4):not(:nth-child(5))) col:nth-child(3) { width: 25%; }table:has(col:nth-child(4):not(:nth-child(5))) col:nth-child(4) { width: 25%; }/* ============================================   LEGACY/COMPATIBILITY CLASSES   ============================================ */.table-data, .td { font-size: 10px; color: var(--color-text); text-align: left; padding: var(--padding-base); }.table-body-content { line-height: 12pt; text-align: left; }.table-body-content-center { line-height: 12pt; text-align: center; }.table-body-content-right { line-height: 12pt; text-align: right; }.section-content { line-height: 13.0909pt; text-align: left; }.price-alignment { line-height: 12pt; text-align: right; }.small-text-right { line-height: 8pt; text-align: right; }.product-description { text-align: left; font-size: 8pt; font-family: var(--font-family-primary); }.text-8pt-helvetica { color: var(--color-text); font-size: 8pt; font-family: var(--font-family-primary); }.text-8pt-helvetica-normal { font-size: 8pt; font-weight: normal; font-family: var(--font-family-primary); color: var(--color-text); }.bold-label { font-family: var(--font-family-primary); font-weight: bold; color: var(--color-text); }.bold-text { color: var(--color-text); font-family: var(--font-family-primary); font-weight: bold; }.part-number { color: var(--color-text); font-size: 8pt; font-family: var(--font-family-primary); }/* ============================================   PRINT OPTIMIZATION   ============================================ */@media print {    body { margin: 0.5in; -webkit-print-color-adjust: exact; print-color-adjust: exact; }    .page-footer { position: fixed; bottom: 0.5in; width: 100%; }}/* ============================================   END STYLESHEET   Total Variables: 20+ | Classes: 100+ | Tables: 5   ============================================ */</style>
+</head>
+<body style="background-image: url('https://NetAppPartner.bigmachines.com/bmfsweb/NetAppPartner/image/Output/Budget.png'); background-repeat: no-repeat; background-position: center center; background-size: 300px auto; background-attachment: fixed; opacity: 0.95;">
+<div style="background-color: rgba(255,255,255,0.95); min-height: 100vh;">
+<header class="page-header">
+<table class="header-table">
+<tr>
+<td class="col-200 logo-container">
+<img style="height: 40px; max-width: 200px;" class="logo-img" alt="NetApp Logo" src="https://NetAppPartner.bigmachines.com/bmfsweb/NetAppPartner/image/logo/NetApp_Logo_QE.png"/>
+</td>
+<td class="col-400 text-center">
+<div class="header">								Solution Quotation								174044<span style="color: #888888; font-size: 16px; font-weight: normal; margin-left: 20px;">[BUDGETARY]</span>
+</div>
+</td>
+<td class="col-100"/>
+</tr>
+</table>
+</header>
+<div>
+<div>
+<table>
+<col/>
+<col/>
+<col/>
+<col/>
+<tbody>
+<tr>
+<td>
+<div class="label-text text-left">Quote Name:</div>
+</td>
+<td colspan="3">
+<div class="data-text text-left">Quote 174044 for Arrow Electronics Inc.</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class="label-text text-left">Quote Date:</div>
+</td>
+<td>
+<div class="data-text text-left">12-Nov-2025</div>
+</td>
+<td>
+<div class="label-text text-left">Quote Valid Until:</div>
+</td>
+<td>
+<div class="data-text text-left">12-Dec-2025</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class="label-text text-left">Contact Name:</div>
+</td>
+<td colspan="3">
+<div class="data-text text-left">Marcy Williams</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class="label-text text-left">Email:</div>
+</td>
+<td colspan="3">
+<div class="data-text text-left">marcy.williams@netapp.com.invalid</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class="label-text text-left">Quote To:</div>
+</td>
+<td colspan="3">
+<div>
+<div>
+<div class="address-content">TD SYNNEX Canada ULC, 6911 Creditview Rd Mississauga Ontario Canada L5N 8G1</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class="label-text text-left">Quote From:</div>
+</td>
+<td colspan="3">
+<div>
+<div>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt">NetApp Inc. , 3060 Olsen Drive, San Jose, CA, 95128, US</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>
+<div class="small-text-left">
+<span class="small-text">End Customer:</span>
+</div>
+</div>
+</div>
+</td>
+<td colspan="3">
+<div class="address-content">Arrow Electronics Inc., 50 Marcus Dr Melville New York United States 11747</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class="label-text text-left">Quote Status:</div>
+</td>
+<td>
+<div class="data-text">Configured</div>
+</td>
+<td>
+<div/>
+</td>
+<td>
+<div/>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div/>
+<div>
+<div>
+<span class="bold-text">Detailed Section</span>
+</div>
+</div>
+<div keep-with-next.within-page="1" keep-with-previous.within-page="1"/>
+<div class="table-header-2">Config#4819317301740442</div>
+<div/>
+<div>
+<table>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<tbody>
+<tr>
+<td colspan="7">
+<div class="section-content">
+<span style="font-size: 12pt">
+<span style="font-weight: bold">
+<span style="color: #000000; font-family: Helvetica">SG58XXA</span>
+</span>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td colspan="7">
+<div class="table-body-content">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span class="product-category">Hardware </span>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td/>
+<td/>
+<td/>
+<td background-color="#E1E1E1" colspan="4">
+<div class="table-body-content-center">
+<span style="color: #000000; font-size: 12pt; font-family: helvetica">
+<span style="font-weight: bold">
+<span style="color: #000000; font-size: 8pt; font-family: helvetica">Estimated</span>
+</span>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class="table-body-content">
+<span class="table-header-bold">Part Number</span>
+</div>
+</td>
+<td>
+<div class="table-body-content">
+<span class="table-header-bold">Product Description</span>
+</div>
+</td>
+<td>
+<div class="table-body-content-center">
+<span class="table-header-bold">Ext. Qty</span>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div class="table-body-content-right">
+<span class="table-header-bold">Unit List Price</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div class="table-body-content-right">
+<span class="table-header-bold">Disc% </span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div class="table-body-content-right">
+<span class="table-header-bold">Unit Net Price</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div class="table-body-content-right">
+<span class="table-header-bold">Ext. Net Price</span>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td colspan="7">
+<div>
+<table>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<tbody>
+<tr>
+<td>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 8pt; font-family: Helvetica">SG5812A-001-48TB</span>
+</div>
+</td>
+<td>
+<div>
+<div class="product-description">SG5812,2U,12x4TB Non-FDE</div>
+<div class="product-description">
+<span style="font-weight: bold"> [ Discount Cat:</span>D<span style="font-weight: bold">]</span>
+</div>
+</div>
+</td>
+<td>
+<div class="table-body-content-center">
+<span style="color: #000000; font-size: 8pt; font-family: Helvetica">1</span>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-weight: normal; font-family: helvetica">$77,658.39</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-weight: normal; font-family: helvetica">
+<span style="font-weight: bold"/>24.04</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-weight: normal; font-family: helvetica">$58,991.55</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-weight: normal; font-family: helvetica">$58,991.55</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td/>
+<td colspan="6">
+<div>
+<div>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="color: #000000; font-size: 10pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-family: helvetica">
+<span class="bold-text">Message:</span>
+</span>
+<span style="font-size: 8pt; font-family: helvetica">Appliance bundle includes: E4000 Controller + Battery, SG5800 Controller with 2x25GbE HIC. 4x25GbE SFPs and 2x0.5m OM4 Cables for interconnect. No cables or SFPs for network connectivity included. 2U Enclosure, Rail Kit, PSUs, In-Cabinet  Power Cords</span>
+</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td colspan="7">
+<div>
+<table>
+<col/>
+<col/>
+<col/>
+<col/>
+<tbody>
+<tr>
+<td>
+<div class="section-content">
+<span style="font-size: 8pt">
+<span style="font-weight: bold">
+<span style="color: #000000; font-family: Helvetica">Estimated Hardware Sub Total:</span>
+</span>
+</span>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-family: helvetica">
+<span style="font-weight: bold">Hardware Ext. List: </span>$77,658.39</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-weight: normal; font-family: helvetica">
+<span style="font-weight: bold">Hardware Discount: </span>24.04</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-family: helvetica">
+<span style="font-weight: bold">Hardware Ext. Net: </span>$58,991.55</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td colspan="7">
+<div class="table-body-content">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="color: #000000; font-size: 8pt; font-family: helvetica">
+<span style="font-weight: bold">
+<span style="color: #000000; font-size: 11pt; font-family: helvetica">Services </span>
+</span>
+</span>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td/>
+<td/>
+<td/>
+<td background-color="#E1E1E1" colspan="4">
+<div class="table-body-content-center">
+<span style="color: #000000; font-size: 12pt; font-family: helvetica">
+<span style="font-weight: bold">
+<span style="color: #000000; font-size: 8pt; font-family: helvetica">Estimated</span>
+</span>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class="table-body-content">
+<span class="table-header-bold">Part Number</span>
+</div>
+</td>
+<td>
+<div class="table-body-content">
+<span class="table-header-bold">Product Description</span>
+</div>
+</td>
+<td>
+<div class="table-body-content-center">
+<span class="table-header-bold">Ext. Qty</span>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div class="table-body-content-right">
+<span class="table-header-bold">Unit List Price</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div class="table-body-content-right">
+<span class="table-header-bold">Disc%</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div class="table-body-content-right">
+<span class="table-header-bold">Unit Net Price</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div class="table-body-content-right">
+<span class="table-header-bold">Ext. Net Price</span>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td colspan="7">
+<div>
+<table>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<tbody>
+<tr>
+<td>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 8pt; font-family: Helvetica">CS-G1-SE-ADVISOR</span>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div class="product-description">SupportEdge Advisor</div>
+<div class="product-description">
+<span style="font-weight: bold"> [ Discount Cat:</span>T<span style="font-weight: bold">]</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div class="table-body-content-center">
+<span style="color: #000000; font-size: 8pt; font-family: Helvetica">1</span>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-weight: normal; font-family: helvetica">$11,648.76</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-weight: normal; font-family: helvetica">
+<span style="font-weight: bold"/>24.04</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-weight: normal; font-family: helvetica">$8,848.40</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-weight: normal; font-family: helvetica">$8,848.40</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td/>
+<td colspan="6">
+<div>
+<div>
+<div class="product-description">
+<span style="font-weight: bold">Period Start Date:</span>12-Nov-2025<span style="font-weight: bold">     Period End Date:</span>11-Nov-2028<span style="font-weight: bold">     Service Period Duration:</span>36Months</div>
+<div class="product-description">
+<span style="font-weight: bold">Service Address:</span>50 Marcus Dr New York United States 11747</div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td colspan="7">
+<div>
+<table>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<tbody>
+<tr>
+<td>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 8pt; font-family: Helvetica">CS-4HR-REPLACEMENT</span>
+</div>
+</td>
+<td>
+<div>
+<div class="product-description">4hr Parts Replacement</div>
+<div class="product-description">
+<span style="font-weight: bold"> [ Discount Cat:</span>T<span style="font-weight: bold">]</span>
+</div>
+</div>
+</td>
+<td>
+<div class="table-body-content-center">
+<span style="color: #000000; font-size: 8pt; font-family: Helvetica">1</span>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-weight: normal; font-family: helvetica">$2,329.75</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-weight: normal; font-family: helvetica">
+<span style="font-weight: bold"/>24.04</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-weight: normal; font-family: helvetica">$1,769.68</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-weight: normal; font-family: helvetica">$1,769.68</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td/>
+<td colspan="6">
+<div>
+<div>
+<div class="product-description">
+<span style="font-weight: bold">Period Start Date:</span>12-Nov-2025<span style="font-weight: bold">     Period End Date:</span>11-Nov-2028<span style="font-weight: bold">     Service Period Duration:</span>36Months</div>
+<div class="product-description">
+<span style="font-weight: bold">Service Address:</span>50 Marcus Dr New York United States 11747</div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td colspan="7">
+<div>
+<table>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<tbody>
+<tr>
+<td>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 8pt; font-family: Helvetica">PS-DEPLOY-STAND-SG</span>
+</div>
+</td>
+<td>
+<div>
+<div class="product-description">PS Deployment,Standard,StorageGRID</div>
+<div class="product-description">
+<span style="font-weight: bold"> [ Discount Cat:</span>P<span style="font-weight: bold">]</span>
+</div>
+</div>
+</td>
+<td>
+<div class="table-body-content-center">
+<span style="color: #000000; font-size: 8pt; font-family: Helvetica">1</span>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-weight: normal; font-family: helvetica">$10,243.95</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-weight: normal; font-family: helvetica">
+<span style="font-weight: bold"/>24.04</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-weight: normal; font-family: helvetica">$7,781.30</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-weight: normal; font-family: helvetica">$7,781.30</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td/>
+<td colspan="6">
+<div>
+<div>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="color: #000000; font-size: 10pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-family: helvetica">
+<span class="bold-text">Message:</span>
+</span>
+<span style="font-size: 8pt; font-family: helvetica">This service is based on a pre-determined set of deployment activities. The complete Standard Service Description for this offering is located at https://www.netapp.com/us/services/service-descriptions.aspx#deployment</span>
+</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td colspan="7">
+<div>
+<table>
+<col/>
+<col/>
+<col/>
+<col/>
+<tbody>
+<tr>
+<td>
+<div class="section-content">
+<span style="font-size: 8pt">
+<span style="font-weight: bold">
+<span style="color: #000000; font-family: Helvetica">Estimated Services Sub Total:</span>
+</span>
+</span>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-family: helvetica">
+<span style="font-weight: bold">Service Ext. List: </span>$24,222.46</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-weight: normal; font-family: helvetica">
+<span style="font-weight: bold">Service Discount: </span>24.04</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-family: helvetica">
+<span style="font-weight: bold">Service Ext. Net: </span>$18,399.38</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td colspan="7">
+<div>
+<table>
+<col/>
+<col/>
+<col/>
+<col/>
+<tbody>
+<tr>
+<td>
+<div class="section-content">
+<span style="font-size: 8pt">
+<span style="font-weight: bold">
+<span style="color: #000000; font-family: Helvetica">Estimated SG58XXA Sub Total :</span>
+</span>
+</span>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-family: helvetica">
+<span style="font-weight: bold">Ext. List Price: </span>$101,880.85</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-weight: normal; font-family: helvetica">
+<span style="font-weight: bold">Discount: </span>24.04</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt; font-family: helvetica">
+<span style="font-weight: bold">Ext. Net Price: </span>$77,390.93</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<table>
+<col/>
+<col/>
+<tbody>
+<tr>
+<td>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span class="bold-label">List Grand Total:</span>
+</span>
+</div>
+</td>
+<td>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 12pt; font-weight: bold; font-family: helvetica">$101,880.85</span>
+</span>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span class="bold-label">Total Discount:</span>
+</span>
+</div>
+</td>
+<td>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 12pt; font-weight: bold; font-family: helvetica">
+<span style="font-weight: bold"/>24.04</span>
+</span>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span class="bold-text">Net Grand Total:</span>
+</span>
+</div>
+</td>
+<td>
+<div>
+<div xmlns:DateUtil="com.bm.xchange.util.DateUtil" xmlns:fo="http://www.w3.org/1999/XSL/Format" style="line-height: 12pt; text-align: right">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 12pt; font-weight: bold; font-family: helvetica">$77,390.93</span>
+</span>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div page-break-before="always"/>
+<div>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="color: #236fa1; font-size: 14pt; font-family: helvetica">
+<span style="font-weight: bold">
+<span style="font-size: 14pt; font-family: helvetica">
+<span style="color: #000000">Quote Information</span>
+</span>
+</span>
+</span>
+</span>
+</div>
+</div>
+<div>
+<table>
+<col/>
+<col/>
+<col/>
+<col/>
+<tbody>
+<tr>
+<td>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="color: #000000; font-size: 8pt; font-family: helvetica">
+<span line-height="107%" style="color: black; font-size: 8pt; font-family: helvetica">Quote Name:</span>
+</span>
+</span>
+</div>
+</td>
+<td colspan="3">
+<div class="table-body-content">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="color: #000000; font-size: 8pt; font-family: helvetica">Quote 174044 for Arrow Electronics Inc.</span>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="color: #000000; font-size: 8pt; font-family: helvetica">Quote Date:</span>
+</span>
+</div>
+</td>
+<td>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 8pt; font-family: Helvetica">12-Nov-2025</span>
+</div>
+</td>
+<td>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="color: #000000; font-size: 8pt; font-family: helvetica">Quote Valid Until:</span>
+</span>
+</div>
+</td>
+<td>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 8pt; font-family: Helvetica">12-Dec-2025</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="color: #000000; font-size: 8pt; font-family: helvetica">Contact Name:</span>
+</span>
+</div>
+</td>
+<td>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 8pt; font-family: Helvetica">Marcy Williams</span>
+</div>
+</td>
+<td>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="color: #000000; font-size: 8pt; font-family: helvetica">Phone:</span>
+</span>
+</div>
+</td>
+<td/>
+</tr>
+<tr>
+<td>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="color: #000000; font-size: 8pt; font-family: helvetica">Email:</span>
+</span>
+</div>
+</td>
+<td colspan="3">
+<div class="table-body-content">
+<span style="color: #000000; font-size: 8pt; font-family: Helvetica">marcy.williams@netapp.com.invalid</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class="label-text text-left">Quote To:</div>
+</td>
+<td colspan="3">
+<div>
+<div>
+<div class="address-content">TD SYNNEX Canada ULC, 6911 Creditview Rd Mississauga Ontario Canada L5N 8G1</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class="label-text text-left">Quote From:</div>
+</td>
+<td colspan="3">
+<div>
+<div>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="font-size: 8pt">NetApp Inc. , 3060 Olsen Drive, San Jose, CA, 95128, US</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>
+<div class="small-text-left">
+<span class="small-text">End Customer:</span>
+</div>
+</div>
+</div>
+</td>
+<td colspan="3">
+<div class="address-content">Arrow Electronics Inc., 50 Marcus Dr Melville New York United States 11747</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="color: #000000; font-size: 12pt; font-family: helvetica">
+<span style="color: #000000; font-size: 8pt; font-family: helvetica">Ship To:</span>
+</span>
+</span>
+</div>
+</td>
+<td colspan="3">
+<div class="address-content"/>
+</td>
+</tr>
+<tr>
+<td>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="color: #000000; font-size: 8pt; font-family: helvetica">
+<span background-style="color: #ffffff; font-family: helvetica">Software Delivery Contact:</span>
+</span>
+</span>
+</div>
+</td>
+<td colspan="3">
+<div/>
+</td>
+</tr>
+<tr>
+<td>
+<div style="text-align: left">
+<span style="color: #000000">
+<span style="color: #000000; font-size: 8pt; font-family: helvetica">Software Delivery Email:</span>
+</span>
+</div>
+</td>
+<td colspan="3">
+<div/>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="color: #000000; font-size: 8pt; font-family: helvetica">Incoterm:</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 8pt; font-family: Helvetica">EXW Laredo, TX</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div class="label-text text-left">Quote Status:</div>
+</td>
+<td>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 8pt; font-family: Helvetica">Configured</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="color: #000000; font-size: 8pt; font-family: helvetica">Contingency:</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 8pt; font-family: Helvetica">None</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div class="label-text text-left">Contract Number:</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 8pt; font-family: Helvetica">00053476.0</span>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div>
+<div>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 12pt; font-family: Helvetica">
+<span style="color: #000000; font-size: 8pt; font-family: helvetica">Order Type:</span>
+</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 8pt; font-family: Helvetica">Standard</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div class="label-text text-left">Contract Name:</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 8pt; font-family: Helvetica">AVT Technology Solutions-Tech Data Government Solutions_MASTER Distributor Agmt</span>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div/>
+</td>
+<td padding-left="0.15in">
+<div/>
+</td>
+<td>
+<div>
+<div>
+<div class="small-text-left">
+<span class="small-text">Payment Terms:</span>
+</div>
+</div>
+</div>
+</td>
+<td>
+<div>
+<div>
+<div class="table-body-content">
+<span style="color: #000000; font-size: 8pt; font-family: Helvetica">0.5% 10, NET 30</span>
+</div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div/>
+<div>
+<table>
+<col/>
+<tbody>
+<tr>
+<td padding-right="0.2in" padding-bottom="0.2in" padding-left="0.2in" padding-top="0.2in">
+<div>
+<div class="table-body-content">
+<span style="font-size: 12pt; font-weight: bold;">
+<span class="bold-text">Terms and Conditions</span>
+</span>
+</div>
+<div class="table-body-content"/>
+<div style="line-height: 12pt; text-align: left; white-space: nowrap; overflow: visible; width: 100%;">
+<span style="white-space: nowrap; font-size: 10pt; display: inline-block;" class="small-text">This quote is presented for budgetary purposes only. All net prices and discounts are estimated values only and are subject to change. A budgetary quote cannot be used as the basis for valid purchase order.</span>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div/>
+<div>
+<table>
+<col/>
+<tbody/>
+</table>
+</div>
+</div>
+</div>
+<div class="page-footer">
+<div class="footer-currency">All amounts are in Canadian Dollar ($)</div>
+<div class="footer-details">    Price List: NA-CAD                                                 Date Printed: 12-Nov-2025                                                                        Page: 1 of 1</div>
+</div>
+</body>
+</html>

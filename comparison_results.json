@@ -1,0 +1,124 @@
+[
+  {
+    "filename": "174044_12-Nov-2025_13-47-19_Quote174044forArrowElectronicsInc..xls",
+    "overall_status": "FAILED",
+    "total_checked": 14,
+    "matches": 1,
+    "mismatches": 13,
+    "transaction_id": "CPQ-173670",
+    "details": [
+      {
+        "field_name": "quoteNumber_t_c",
+        "section": "Header",
+        "expected": "173670",
+        "found": "174044",
+        "match": false,
+        "message": null
+      },
+      {
+        "field_name": "transactionID_t",
+        "section": "Header",
+        "expected": "CPQ-173670",
+        "found": null,
+        "match": false,
+        "message": null
+      },
+      {
+        "field_name": "quoteNetPrice_t_c",
+        "section": "Summary",
+        "expected": 7890957.98,
+        "found": 77390.93,
+        "match": false,
+        "message": null
+      },
+      {
+        "field_name": "quoteListPrice_t_c",
+        "section": "Summary",
+        "expected": 11058128.98,
+        "found": 77658.39,
+        "match": false,
+        "message": null
+      },
+      {
+        "field_name": "quoteCurrentDiscount_t_c",
+        "section": "Summary",
+        "expected": 28.64,
+        "found": 24.04,
+        "match": false,
+        "message": null
+      },
+      {
+        "field_name": "currency_t",
+        "section": "Header",
+        "expected": "INR",
+        "found": null,
+        "match": false,
+        "message": null
+      },
+      {
+        "field_name": "priceList_t_c",
+        "section": "Header",
+        "expected": "INTL-INR",
+        "found": "NA-CAD",
+        "match": false,
+        "message": null
+      },
+      {
+        "field_name": "status_t",
+        "section": "Header",
+        "expected": "Configured",
+        "found": "Configured",
+        "match": true,
+        "message": null
+      },
+      {
+        "field_name": "createdDate_t",
+        "section": "Header",
+        "expected": "2025-10-23",
+        "found": "12-Nov-2025",
+        "match": false,
+        "message": null
+      },
+      {
+        "field_name": "expiresOnDate_t_c",
+        "section": "Header",
+        "expected": "2025-11-22",
+        "found": "12-Dec-2025",
+        "match": false,
+        "message": null
+      },
+      {
+        "field_name": "incoterm_t_c",
+        "section": "Header",
+        "expected": "FCA Helmond",
+        "found": "Quote Name:",
+        "match": false,
+        "message": null
+      },
+      {
+        "field_name": "paymentTerms_t_c",
+        "section": "Header",
+        "expected": "NET 30",
+        "found": null,
+        "match": false,
+        "message": null
+      },
+      {
+        "field_name": "orderType_t_c",
+        "section": "Header",
+        "expected": "Standard",
+        "found": null,
+        "match": false,
+        "message": null
+      },
+      {
+        "field_name": "quoteNameTextArea_t_c",
+        "section": "Header",
+        "expected": "Quote 173670 for Arrow Technologies Pvt Ltd. - Copy of 173665",
+        "found": "174044 for Arrow Electronics Inc.",
+        "match": false,
+        "message": null
+      }
+    ]
+  }
+]

@@ -1,0 +1,226 @@
+{
+  "overall_status": "FAILED",
+  "total_checked": 27,
+  "matches": 10,
+  "mismatches": 17,
+  "transaction_id": "481931730",
+  "excel_filename": "174044_12-Nov-2025_13-47-19_Quote174044forArrowElectronicsInc..xls",
+  "details": [
+    {
+      "field_name": "quoteNumber_t_c",
+      "section": "Header",
+      "expected": "174044",
+      "found": "174044",
+      "match": true,
+      "message": null
+    },
+    {
+      "field_name": "transactionID_t",
+      "section": "Header",
+      "expected": "CPQ-174044",
+      "found": null,
+      "match": false,
+      "message": null
+    },
+    {
+      "field_name": "quoteNetPrice_t_c",
+      "section": "Summary",
+      "expected": 77390.93,
+      "found": 77390.93,
+      "match": true,
+      "message": null
+    },
+    {
+      "field_name": "quoteListPrice_t_c",
+      "section": "Summary",
+      "expected": 101880.85,
+      "found": 77658.39,
+      "match": false,
+      "message": "CRITICAL: List Grand Total validation (Unit prices sum to this)"
+    },
+    {
+      "field_name": "extNetPrice_t_c",
+      "section": "Summary",
+      "expected": 77390.93,
+      "found": 77390.93,
+      "match": true,
+      "message": null
+    },
+    {
+      "field_name": "quoteDesiredNetPrice_t_c",
+      "section": "Summary",
+      "expected": 77390.93,
+      "found": 77390.93,
+      "match": true,
+      "message": null
+    },
+    {
+      "field_name": "quoteCurrentDiscount_t_c",
+      "section": "Summary",
+      "expected": 24.04,
+      "found": 24.04,
+      "match": true,
+      "message": null
+    },
+    {
+      "field_name": "currency_t",
+      "section": "Header",
+      "expected": "CAD",
+      "found": null,
+      "match": false,
+      "message": null
+    },
+    {
+      "field_name": "priceList_t_c",
+      "section": "Header",
+      "expected": "NA-CAD",
+      "found": "NA-CAD",
+      "match": true,
+      "message": null
+    },
+    {
+      "field_name": "status_t",
+      "section": "Header",
+      "expected": "Configured",
+      "found": "Configured",
+      "match": true,
+      "message": null
+    },
+    {
+      "field_name": "createdDate_t",
+      "section": "Header",
+      "expected": "2025-11-12",
+      "found": "12-Nov-2025",
+      "match": true,
+      "message": null
+    },
+    {
+      "field_name": "expiresOnDate_t_c",
+      "section": "Header",
+      "expected": "2025-12-12",
+      "found": "12-Dec-2025",
+      "match": true,
+      "message": null
+    },
+    {
+      "field_name": "incoterm_t_c",
+      "section": "Header",
+      "expected": "EXW Laredo, TX",
+      "found": "Quote Name:",
+      "match": false,
+      "message": null
+    },
+    {
+      "field_name": "paymentTerms_t_c",
+      "section": "Header",
+      "expected": "0.5% 10, NET 30",
+      "found": null,
+      "match": false,
+      "message": null
+    },
+    {
+      "field_name": "orderType_t_c",
+      "section": "Header",
+      "expected": "Standard",
+      "found": null,
+      "match": false,
+      "message": null
+    },
+    {
+      "field_name": "quoteNameTextArea_t_c",
+      "section": "Header",
+      "expected": "Quote 174044 for Arrow Electronics Inc.",
+      "found": "174044 for Arrow Electronics Inc.",
+      "match": true,
+      "message": null
+    },
+    {
+      "field_name": "currency_t",
+      "section": "Header",
+      "expected": "CAD",
+      "found": null,
+      "match": false,
+      "message": null
+    },
+    {
+      "field_name": "freightTerms_t_c",
+      "section": "Header",
+      "expected": "Collect",
+      "found": null,
+      "match": false,
+      "message": null
+    },
+    {
+      "field_name": "contractName_t",
+      "section": "Header",
+      "expected": "Agreement for 11/12 Arrow Electronics Inc.-Opp-201981123-Checking NA Reseller Login",
+      "found": "AVT Technology Solutions-Tech Data Government Solutions_MASTER Distributor Agmt Payment Terms: 0.5% 10, NET 30 Terms and Conditions This quote is presented for budgetary purposes only. All net prices and discounts are estimated values only and are subject to change. A budgetary quote cannot be used as the basis for valid purchase order. All amounts are in Canadian Dollar ($) Price List: NA-CAD Date Printed: 12-Nov-2025 Page: 1 of 1",
+      "match": false,
+      "message": null
+    },
+    {
+      "field_name": "contractStartDate_t",
+      "section": "Header",
+      "expected": "2025-11-12",
+      "found": null,
+      "match": false,
+      "message": null
+    },
+    {
+      "field_name": "lastUpdatedDate_t",
+      "section": "Header",
+      "expected": "2025-11-12T15:01:00Z",
+      "found": null,
+      "match": false,
+      "message": null
+    },
+    {
+      "field_name": "lastUpdatedBy_t",
+      "section": "Header",
+      "expected": "NA Reseller1",
+      "found": null,
+      "match": false,
+      "message": null
+    },
+    {
+      "field_name": "sellingMotion_t_c",
+      "section": "Header",
+      "expected": "NetApp to Distributor",
+      "found": null,
+      "match": false,
+      "message": null
+    },
+    {
+      "field_name": "district_t_c",
+      "section": "Header",
+      "expected": "AM-Four Corners District",
+      "found": null,
+      "match": false,
+      "message": null
+    },
+    {
+      "field_name": "extNetPrice_t_c",
+      "section": "Summary",
+      "expected": 77390.93,
+      "found": null,
+      "match": false,
+      "message": null
+    },
+    {
+      "field_name": "quoteDesiredNetPrice_t_c",
+      "section": "Summary",
+      "expected": 77390.93,
+      "found": null,
+      "match": false,
+      "message": null
+    },
+    {
+      "field_name": "quoteDesiredDiscount_t_c",
+      "section": "Summary",
+      "expected": 24.04,
+      "found": null,
+      "match": false,
+      "message": null
+    }
+  ]
+}
