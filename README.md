@@ -107,7 +107,7 @@ Pass `--config path/to/config.json` to override defaults. Example:
 
 ## Usage
 
-CLI requires a document and a Transaction ID. The document can be a PDF or an Excel export (`.xls`/`.xlsx`).
+CLI requires a document and a Transaction ID. The document can be a PDF or an Excel export (`.xls`/`.xlsx`) even though the flag is named `--pdf`.
 
 ```bash
 python main.py --pdf "./Quote173670.pdf" --transaction-id 481320048
@@ -122,7 +122,9 @@ python main.py \
   --config ./config.json \
   --out ./Validated_173670.pdf \
   --xlsx ./Validated_173670.xlsx \
-  --json ./result.json
+  --json ./result.json \
+  --api-json ./api_snapshot.json \
+  --doc-json ./quote_parsed.json
 ```
 
 Behavior:
@@ -130,6 +132,9 @@ Behavior:
 - Always writes a validation PDF (default name: `<input_stem>_validated_<txid>.pdf`)
 - If `--xlsx` is provided, writes an XLSX details report
 - If `--json` is provided, writes a machine-readable summary
+- `--api-json` writes a structured snapshot of the fetched CPQ API payload
+- `--doc-json` writes the parsed fields and line items extracted from the quote document
+- `--all-artifacts` generates every optional output automatically with sensible default filenames
 
 On first run, if neither Bearer token nor Basic Auth are set, you’ll be prompted for username/password.
 
