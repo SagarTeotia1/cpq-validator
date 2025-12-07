@@ -343,7 +343,7 @@ def validate_line_item_pricing_comprehensive(config: AppConfig, api_data: Dict[s
                         excel_parsed = None
                         tolerance = 0.0
                 
-                match = floats_match(api_parsed, excel_parsed, tolerance) if (api_parsed is not None and excel_parsed is not None) else False
+                match = floats_match(api_parsed, excel_parsed, tolerance)
                 
                 results.append(
                     FieldResult(

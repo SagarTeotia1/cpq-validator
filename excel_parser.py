@@ -108,11 +108,17 @@ FIELD_MAPPING: Dict[str, Dict[str, Any]] = {
         "adjacent_search": True,
     },
     "contractName_t": {
-        "labels": ["contract name"],
-        "patterns": [],
+        "labels": ["contract name", "contract", "agreement name", "agreement"],
+        "patterns": [
+            r"contract\s*name\s*[:\-]?\s*(.+?)(?:\s*(?:contract|agreement|end|start|date|number|payment|incoterm))",
+            r"agreement\s*(?:name|for)\s*[:\-]?\s*(.+?)(?:\s*(?:contract|agreement|end|start|date|number|payment|incoterm))",
+            r"(?:contract|agreement)\s*name\s*[:\-]?\s*(.+?)(?:\n|$)",
+            r"agreement\s+for\s+([\d/]+\s+[A-Za-z0-9\s.,\-]+?)(?:\s*(?:contract|agreement|end|start|date|number|payment|incoterm|quote\s+information))",
+        ],
         "field_type": "string",
         "adjacent_search": True,
         "multi_cell": True,
+        "match_threshold": 0.75,
     },
     "contractStartDate_t": {
         "labels": ["contract start date"],
@@ -310,6 +316,99 @@ FIELD_MAPPING: Dict[str, Dict[str, Any]] = {
         "adjacent_search": True,
         "multi_cell": True,
     },
+    "contractNumber_t": {
+        "labels": ["contract number", "contract #"],
+        "patterns": [
+            r"contract\s*(?:number|#)\s*[:\-]?\s*([A-Z0-9\-]+)",
+        ],
+        "field_type": "string",
+        "adjacent_search": True,
+        "multi_cell": False,
+    },
+    "endCustomer_t_c": {
+        "labels": ["end customer", "customer", "quote to"],
+        "patterns": [
+            r"end\s+customer\s*[:\-]?\s*(.+?)(?:\n|quote|from|contract)",
+            r"quote\s+to\s*[:\-]?\s*(.+?)(?:\n|quote|from|contract)",
+        ],
+        "field_type": "string",
+        "adjacent_search": True,
+        "multi_cell": True,
+    },
+    "quoteFrom_t_c": {
+        "labels": ["quote from", "from"],
+        "patterns": [
+            r"quote\s+from\s*[:\-]?\s*(.+?)(?:\n|quote|to|contract)",
+        ],
+        "field_type": "string",
+        "adjacent_search": True,
+        "multi_cell": True,
+    },
+    "contactName_t_c": {
+        "labels": ["contact name", "contact"],
+        "patterns": [
+            r"contact\s+name\s*[:\-]?\s*(.+?)(?:\n|email|phone|address)",
+        ],
+        "field_type": "string",
+        "adjacent_search": True,
+        "multi_cell": False,
+    },
+    "contactEmail_t_c": {
+        "labels": ["contact email", "email"],
+        "patterns": [
+            r"email\s*[:\-]?\s*([A-Za-z0-9_.+-]+@[A-Za-z0-9_.\-]+\.[A-Za-z]{2,})",
+            r"contact\s+email\s*[:\-]?\s*([A-Za-z0-9_.+-]+@[A-Za-z0-9_.\-]+\.[A-Za-z]{2,})",
+        ],
+        "field_type": "string",
+        "adjacent_search": True,
+        "multi_cell": False,
+    },
+    "contingency_t_c": {
+        "labels": ["contingency"],
+        "patterns": [],
+        "field_type": "string",
+        "adjacent_search": True,
+        "multi_cell": False,
+    },
+    "quoteType_t_c": {
+        "labels": ["quote type", "type"],
+        "patterns": [],
+        "field_type": "string",
+        "adjacent_search": True,
+        "multi_cell": False,
+    },
+    "dealRegID_t_c": {
+        "labels": ["deal reg id", "deal registration id", "deal reg"],
+        "patterns": [
+            r"deal\s*(?:reg|registration)\s*(?:id|#)?\s*[:\-]?\s*([A-Z0-9\-]+)",
+        ],
+        "field_type": "string",
+        "adjacent_search": True,
+        "multi_cell": False,
+    },
+    "projectCode_t_c": {
+        "labels": ["project code", "project"],
+        "patterns": [
+            r"project\s+code\s*[:\-]?\s*([A-Z0-9\-]+)",
+        ],
+        "field_type": "string",
+        "adjacent_search": True,
+        "multi_cell": False,
+    },
+    "sCSoldToContractName_t_c": {
+        "labels": ["sold to contract name", "sold to contract"],
+        "patterns": [],
+        "field_type": "string",
+        "adjacent_search": True,
+        "multi_cell": True,
+    },
+    "sCEndCustomerContractName_t_c": {
+        "labels": ["end customer contract name", "end customer contract"],
+        "patterns": [],
+        "field_type": "string",
+        "adjacent_search": True,
+        "multi_cell": True,
+    },
 }
 
 
@@ -336,7 +435,7 @@ def extract_excel_data(xls_bytes: bytes) -> Dict[str, Any]:
 
     for field_name, config in FIELD_MAPPING.items():
         raw_value, reference, method, confidence = _extract_field(
-            tables, text_flat, config
+            tables, text_flat, config, field_name
         )
         if raw_value is None:
             metadata["fields_missing"].append(field_name)
@@ -396,6 +495,7 @@ def _extract_field(
     tables: List[pd.DataFrame],
     text_flat: str,
     config: Dict[str, Any],
+    field_name: Optional[str] = None,
 ) -> Tuple[Optional[str], Optional[str], str, float]:
     labels = config.get("labels") or []
     patterns = config.get("patterns") or []
@@ -414,12 +514,20 @@ def _extract_field(
 
     if text_flat and patterns:
         for pattern in patterns:
-            compiled = re.compile(pattern, re.IGNORECASE)
+            compiled = re.compile(pattern, re.IGNORECASE | re.DOTALL)
             match = compiled.search(text_flat)
             if match:
+                extracted_value = None
                 if match.groups():
-                    return match.group(1).strip(), "pattern", "pattern", PATTERN_CONFIDENCE
-                return match.group(0).strip(), "pattern", "pattern", PATTERN_CONFIDENCE
+                    extracted_value = match.group(1).strip()
+                else:
+                    extracted_value = match.group(0).strip()
+                
+                if extracted_value:
+                    # Clean up the extracted value for contract names
+                    if field_name == "contractName_t":
+                        extracted_value = _clean_contract_name(extracted_value)
+                    return extracted_value, "pattern", "pattern", PATTERN_CONFIDENCE
 
     return None, None, "not_found", 0.0
 
@@ -434,6 +542,8 @@ def locate_field_value(
     best_value: Optional[str] = None
     best_reference: Optional[str] = None
     best_score = 0.0
+    contract_name_candidates: List[Tuple[str, str, float]] = []  # Store contract name candidates
+    is_contract_name_field = any("contract" in label.lower() for label in labels)
 
     for table_idx, df in enumerate(tables):
         rows, cols = df.shape
@@ -447,18 +557,94 @@ def locate_field_value(
                 if score < threshold:
                     continue
 
+                # Special handling for contract name to avoid false matches
+                is_contract_name = "contract" in matched_label.lower() if matched_label else False
+                if is_contract_name:
+                    # Skip if this looks like contract start/end date or contract number
+                    if any(keyword in cell_text.lower() for keyword in ["contract start", "contract end", "contract number", "contract #"]):
+                        continue
+                    # Skip if it's just "Quote Information" without actual contract name
+                    if cell_text.lower().strip() in ["quote information", "contract name", "agreement name"]:
+                        continue
+                    # Require higher score for contract name to avoid false matches
+                    if score < 0.85:
+                        continue
+                    
+                    # Check if the adjacent cell value looks like a contact name (simple name pattern)
+                    # Contact names are typically 1-3 words, all capitalized, no special characters
+                    # Contract names typically have "Agreement", "Contract", company names with Ltd/Inc, etc.
+                    if row_idx < df.shape[0] and col_idx + 1 < df.shape[1]:
+                        next_cell = _normalize_cell_text(df.iat[row_idx, col_idx + 1])
+                        if next_cell and _is_likely_contact_name(next_cell):
+                            # This looks like a contact name, skip this match and continue searching
+                            continue
+                    
+                    # Also check cells further away for actual contract names
+                    # Look for patterns like "CompanyName_Region Agreement" in nearby cells
+                    # Search in the same row first (most common case)
+                    for check_offset in range(1, min(10, cols - col_idx)):
+                        if col_idx + check_offset < cols:
+                            check_cell = _normalize_cell_text(df.iat[row_idx, col_idx + check_offset])
+                            if check_cell and not _is_likely_contact_name(check_cell):
+                                # Check if it contains contract name patterns
+                                contract_patterns = [
+                                    r"[A-Z][a-zA-Z\s]+(?:Ltd|Inc|Corp|LLC)\s*_\s*[A-Z]+\s+[A-Z][a-zA-Z\s]+(?:Agreement|Agreem|Contract|Supplier|Distribution|Master)",
+                                    r"[A-Z][a-zA-Z\s]+Technology\s+(?:Ltd|Inc|Corp|LLC)\s*_\s*[A-Z]+\s+[A-Z][a-zA-Z\s]+(?:Agreement|Agreem|Contract)",
+                                ]
+                                for pattern in contract_patterns:
+                                    if re.search(pattern, check_cell, re.IGNORECASE):
+                                        # Found a likely contract name, use this instead
+                                        contract_name_candidates.append((check_cell, _cell_reference(table_idx, row_idx, col_idx + check_offset), score + 0.2))
+                                        break
+                    
+                    # Also check rows above and below (contract name might be in a different row)
+                    for row_offset in [-1, 1]:
+                        check_row_idx = row_idx + row_offset
+                        if 0 <= check_row_idx < rows:
+                            # Check a few cells in the same column or nearby
+                            for col_offset in range(-2, 3):
+                                check_col_idx = col_idx + col_offset
+                                if 0 <= check_col_idx < cols:
+                                    check_cell = _normalize_cell_text(df.iat[check_row_idx, check_col_idx])
+                                    if check_cell and not _is_likely_contact_name(check_cell):
+                                        contract_patterns = [
+                                            r"[A-Z][a-zA-Z\s]+(?:Ltd|Inc|Corp|LLC)\s*_\s*[A-Z]+\s+[A-Z][a-zA-Z\s]+(?:Agreement|Agreem|Contract|Supplier|Distribution|Master)",
+                                            r"[A-Z][a-zA-Z\s]+Technology\s+(?:Ltd|Inc|Corp|LLC)\s*_\s*[A-Z]+\s+[A-Z][a-zA-Z\s]+(?:Agreement|Agreem|Contract)",
+                                        ]
+                                        for pattern in contract_patterns:
+                                            if re.search(pattern, check_cell, re.IGNORECASE):
+                                                contract_name_candidates.append((check_cell, _cell_reference(table_idx, check_row_idx, check_col_idx), score + 0.15))
+                                                break
+
                 value = None
-                if ":" in cell_raw:
+                if ":" in str(cell_raw):
                     inline_parts = str(cell_raw).split(":", 1)
                     if _looks_like_label(inline_parts[0]):
                         inline_value = _normalize_cell_text(inline_parts[1])
                         if inline_value:
                             value = inline_value
+                            # Clean up contract name - remove common suffixes
+                            if is_contract_name:
+                                value = _clean_contract_name(value)
 
                 if adjacent_search and not value:
-                    value = _collect_horizontal(df, row_idx, col_idx, multi_cell)
+                    # For contract name, use more cells to capture full name
+                    max_cells = 10 if multi_cell and is_contract_name else 5
+                    value = _collect_horizontal(df, row_idx, col_idx, multi_cell, max_cells, is_contract_name)
+                    if is_contract_name and value:
+                        # Validate that this looks like a contract name, not a contact name
+                        if _is_likely_contact_name(value):
+                            # This looks like a contact name, skip it
+                            continue
+                        value = _clean_contract_name(value)
                 if adjacent_search and not value:
                     value = _collect_vertical(df, row_idx, col_idx, multi_cell)
+                    if is_contract_name and value:
+                        # Validate that this looks like a contract name, not a contact name
+                        if _is_likely_contact_name(value):
+                            # This looks like a contact name, skip it
+                            continue
+                        value = _clean_contract_name(value)
 
                 if not value:
                     continue
@@ -469,7 +655,170 @@ def locate_field_value(
                     best_value = value
                     best_reference = reference
 
+    # For contract names, prioritize candidates that look like actual contract names
+    if contract_name_candidates:
+        # Sort by score (highest first)
+        contract_name_candidates.sort(key=lambda x: x[2], reverse=True)
+        # Use the best contract name candidate
+        best_contract_value, best_contract_ref, best_contract_score = contract_name_candidates[0]
+        if best_contract_score > best_score or (best_value and _is_likely_contact_name(best_value)):
+            # Use the contract name candidate if it's better or if current value is a contact name
+            best_value = _clean_contract_name(best_contract_value)
+            best_reference = best_contract_ref
+            best_score = best_contract_score
+
     return best_value, best_reference, best_score
+
+
+def _is_likely_contact_name(value: str) -> bool:
+    """Check if a value looks like a contact name rather than a contract name."""
+    if not value:
+        return False
+    
+    value_clean = value.strip()
+    
+    # Contact names are typically:
+    # - 1-4 words
+    # - Each word starts with capital letter
+    # - No special characters like underscores, dashes (except hyphens in names)
+    # - No contract-related keywords
+    
+    words = value_clean.split()
+    if len(words) > 4:
+        # Contract names are usually longer
+        return False
+    
+    # Check for contract-related keywords
+    contract_keywords = ["agreement", "contract", "ltd", "inc", "corp", "llc", "technology", 
+                        "solutions", "distribution", "supplier", "master", "prc", "opp-"]
+    if any(keyword in value_clean.lower() for keyword in contract_keywords):
+        return False
+    
+    # Check for patterns that indicate contract names
+    # Pattern: CompanyName_Region or CompanyName Ltd_Region
+    if re.search(r"[A-Z][a-zA-Z\s]+(?:Ltd|Inc|Corp|LLC)\s*_\s*[A-Z]+", value_clean):
+        return False
+    
+    # Check if it's just a simple name pattern (First Last or First Middle Last)
+    # Simple names: 2-3 words, all title case, no special chars except hyphens
+    name_pattern = r"^[A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2}$"
+    if re.match(name_pattern, value_clean):
+        # Check if it's repeated (like "Kerry Cheng Kerry Cheng Kerry Cheng")
+        words_list = words
+        if len(set(words_list)) <= 3 and len(words_list) > 3:
+            # Repeated name pattern - definitely a contact name
+            return True
+        # Simple name without contract keywords - likely contact name
+        return True
+    
+    return False
+
+
+def _clean_contract_name(value: str) -> str:
+    """Clean up contract name by removing common suffixes and artifacts."""
+    if not value:
+        return value
+    
+    # Remove checkmarks and special characters at the end
+    value = value.rstrip("✓✓✓✓")
+    
+    # Remove leading section headers that shouldn't be part of contract name
+    leading_phrases_to_remove = [
+        r"^quote\s+information\s+",
+        r"^contract\s+name\s*[:\-]?\s*",
+        r"^agreement\s+name\s*[:\-]?\s*",
+    ]
+    for pattern in leading_phrases_to_remove:
+        value = re.sub(pattern, "", value, flags=re.IGNORECASE).strip()
+    
+    # Split on common delimiters that indicate end of contract name
+    # Stop at phrases that indicate a new field
+    stop_phrases = [
+        "contract start date",
+        "contract end date", 
+        "contract number",
+        "payment terms",
+        "incoterm",
+        "quote information",
+        "quote from",
+        "quote to",
+        "end customer",
+    ]
+    
+    # Find the earliest occurrence of any stop phrase
+    earliest_stop = len(value)
+    for phrase in stop_phrases:
+        idx = value.lower().find(phrase.lower())
+        if idx != -1 and idx < earliest_stop:
+            earliest_stop = idx
+    
+    # Also check for patterns that indicate a second contract name
+    # Look for patterns like "CompanyName_Agreement" that might be a second contract
+    # Pattern: CompanyName Ltd_Region Master Distribution Supplier Agreement
+    # This pattern matches: "Lenovo NetApp Technology Ltd_PRC Master Distribution Supplier Agreem"
+    second_contract_patterns = [
+        # Pattern: CompanyName Technology Ltd_Region Agreement
+        r"\s+([A-Z][a-zA-Z\s]+Technology\s+(?:Ltd|Inc|Corp|LLC)\s*_\s*[A-Z]+\s+[A-Z][a-zA-Z\s]+(?:Agreement|Agreem|Contract|Supplier|Distribution))",
+        # Pattern: CompanyName Ltd_Region Agreement  
+        r"\s+([A-Z][a-zA-Z\s]+(?:Ltd|Inc|Corp|LLC)\s*_\s*[A-Z]{2,}\s+[A-Z][a-zA-Z\s]+(?:Agreement|Agreem|Contract|Supplier|Distribution|Master))",
+        # Pattern: CompanyName Ltd Region Agreement (with space instead of underscore)
+        r"\s+([A-Z][a-zA-Z\s]+(?:Ltd|Inc|Corp|LLC)\s+[A-Z]{2,}\s+[A-Z][a-zA-Z\s]+(?:Agreement|Agreem|Contract|Supplier|Distribution|Master))",
+    ]
+    
+    for pattern in second_contract_patterns:
+        match = re.search(pattern, value, re.IGNORECASE)
+        if match:
+            # Take only the part before the second contract
+            # Make sure we don't cut off in the middle of a word
+            stop_pos = match.start()
+            # If there's a period or other punctuation before, include it
+            if stop_pos > 0 and value[stop_pos-1] in ['.', '!', '?']:
+                stop_pos -= 1
+            value = value[:stop_pos].strip()
+            # Remove trailing period if it's just a period
+            if value.endswith('.'):
+                value = value[:-1].strip()
+            break
+    
+    # Also check for common patterns where a company name followed by underscore indicates a new contract
+    # Pattern: "CompanyName Ltd_Region Agreement"
+    company_underscore_pattern = r"([A-Z][a-zA-Z\s]+(?:Ltd|Inc|Corp|LLC)\s*_\s*[A-Z]{2,}\s+[A-Z][a-zA-Z\s]+(?:Agreement|Agreem|Contract|Supplier|Distribution))"
+    matches = list(re.finditer(company_underscore_pattern, value, re.IGNORECASE))
+    if len(matches) > 1:
+        # If we find multiple such patterns, take only the first contract name
+        # Find where the second pattern starts
+        if len(matches) >= 2:
+            # Check if the first match is part of the actual contract name or if it's a second contract
+            first_match_end = matches[0].end()
+            # If there's a second match and it's clearly a separate contract, stop before it
+            if matches[1].start() > first_match_end:
+                # Check if the text between matches looks like it ends the first contract
+                text_between = value[first_match_end:matches[1].start()].strip()
+                if len(text_between) < 20 or any(word in text_between.lower() for word in [".", "testing", "opp-"]):
+                    # This looks like the end of the first contract, stop here
+                    value = value[:matches[1].start()].strip()
+    
+    # If we found a stop phrase, truncate there
+    if earliest_stop < len(value):
+        value = value[:earliest_stop].strip()
+    
+    # Remove common trailing phrases that might be from adjacent cells
+    trailing_phrases = [
+        "contract start date",
+        "contract end date", 
+        "contract number",
+        "payment terms",
+        "incoterm",
+        "quote information",
+    ]
+    for phrase in trailing_phrases:
+        if value.lower().endswith(phrase.lower()):
+            value = value[:-(len(phrase))].strip()
+    
+    # Remove extra whitespace
+    value = re.sub(r"\s+", " ", value).strip()
+    
+    return value
 
 
 def _match_label(text: str, labels: List[str]) -> Tuple[float, Optional[str]]:
@@ -494,18 +843,45 @@ def _collect_horizontal(
     row_idx: int,
     col_idx: int,
     multi_cell: bool,
+    max_cells: int = 5,
+    is_contract_name: bool = False,
 ) -> Optional[str]:
     values: List[str] = []
     cols = df.shape[1]
+    cells_collected = 0
     for offset in range(1, cols - col_idx):
+        if cells_collected >= max_cells:
+            break
         candidate = _normalize_cell_text(df.iat[row_idx, col_idx + offset])
         if not candidate:
             if multi_cell:
                 continue
             break
+        
+        # For contract names, check for patterns that indicate a second contract name
+        if is_contract_name:
+            # Check if this cell contains a pattern like "CompanyName_Agreement" which might be a second contract
+            second_contract_pattern = r"^[A-Z][a-zA-Z\s]+(?:Ltd|Inc|Corp|LLC)[_\s]+[A-Z]+\s+[A-Z][a-zA-Z\s]+(?:Agreement|Agreem|Contract)"
+            if re.match(second_contract_pattern, candidate):
+                # Stop before this second contract name
+                break
+        
+        # Stop if we hit another label (but allow for multi-cell fields like contract names)
         if _looks_like_label(candidate) and not multi_cell:
             break
+        # For contract names, stop if we hit certain keywords that indicate end of field
+        stop_keywords = ["contract start date", "contract end date", "contract number", "payment terms", "incoterm", "quote from", "quote to", "end customer"]
+        if multi_cell and candidate.lower() in stop_keywords:
+            break
+        # Also stop if we see a pattern that looks like a new section
+        if is_contract_name and re.match(r"^[A-Z][a-zA-Z\s]+\s+[A-Z][a-zA-Z\s]+$", candidate) and len(candidate.split()) >= 2:
+            # Check if it might be a company name starting a new contract
+            if any(word in candidate.lower() for word in ["ltd", "inc", "corp", "llc", "technology", "solutions"]):
+                # This might be a second contract, stop here
+                break
+        
         values.append(candidate)
+        cells_collected += 1
         if not multi_cell:
             break
     joined = " ".join(values).strip()
@@ -559,6 +935,7 @@ def _normalize_cell_text(value: Any) -> str:
     text = re.sub(r"<[^>]+>", " ", text)
     text = html_lib.unescape(text)
     text = text.replace("\xa0", " ")
+    # Preserve currency symbols and numbers for price columns
     text = re.sub(r"\s+", " ", text).strip()
     if text.lower() in {"nan", "none"}:
         return ""
@@ -615,10 +992,23 @@ def parse_line_items_advanced(
         data_df = df.iloc[data_start:].reset_index(drop=True)
 
         column_map = _build_column_map(header_labels)
-        if column_map.get("part") is None or column_map.get("unit_list") is None:
+        if column_map.get("part") is None:
+            continue
+        
+        # Check if we have at least one price column (unit or extended)
+        has_price_column = (
+            column_map.get("unit_list") is not None or
+            column_map.get("unit_net") is not None or
+            column_map.get("ext_list") is not None or
+            column_map.get("ext_net") is not None
+        )
+        if not has_price_column:
             continue
 
-        for _, row in data_df.iterrows():
+        # Track current section (Hardware or Services)
+        current_section = None
+
+        for row_idx, row in data_df.iterrows():
             part = (
                 _normalize_cell_text(row.iloc[column_map["part"]])
                 if column_map.get("part") is not None
@@ -630,26 +1020,43 @@ def parse_line_items_advanced(
                 else ""
             )
 
+            # Check for section headers
+            part_lower = part.lower()
+            desc_lower = description.lower()
+            if "hardware" in part_lower or "hardware" in desc_lower:
+                current_section = "Hardware"
+                continue
+            elif "service" in part_lower or "service" in desc_lower:
+                if "part number" not in part_lower:  # Skip header rows
+                    current_section = "Services"
+                continue
+
+            # Skip header rows and totals
             if not part and not description:
                 continue
-            if "total" in part.lower() or "total" in description.lower():
+            if "total" in part_lower or "total" in desc_lower:
+                continue
+            if part_lower in ("part number", "part", "description", "product description"):
+                continue
+            if desc_lower in ("part number", "part", "description", "product description"):
                 continue
 
             quantity = parse_int(
                 row.iloc[column_map["quantity"]] if column_map.get("quantity") is not None else None
             )
-            unit_list = parse_currency(
-                row.iloc[column_map["unit_list"]] if column_map.get("unit_list") is not None else None
-            )
-            unit_net = parse_currency(
-                row.iloc[column_map["unit_net"]] if column_map.get("unit_net") is not None else None
-            )
-            ext_list = parse_currency(
-                row.iloc[column_map["ext_list"]] if column_map.get("ext_list") is not None else None
-            )
-            ext_net = parse_currency(
-                row.iloc[column_map["ext_net"]] if column_map.get("ext_net") is not None else None
-            )
+            
+            # Extract price values - convert to string first to handle formatted currency values
+            unit_list_raw = row.iloc[column_map["unit_list"]] if column_map.get("unit_list") is not None else None
+            unit_list = parse_currency(str(unit_list_raw) if unit_list_raw is not None else None)
+            
+            unit_net_raw = row.iloc[column_map["unit_net"]] if column_map.get("unit_net") is not None else None
+            unit_net = parse_currency(str(unit_net_raw) if unit_net_raw is not None else None)
+            
+            ext_list_raw = row.iloc[column_map["ext_list"]] if column_map.get("ext_list") is not None else None
+            ext_list = parse_currency(str(ext_list_raw) if ext_list_raw is not None else None)
+            
+            ext_net_raw = row.iloc[column_map["ext_net"]] if column_map.get("ext_net") is not None else None
+            ext_net = parse_currency(str(ext_net_raw) if ext_net_raw is not None else None)
             discount_percent = parse_percentage(
                 row.iloc[column_map["discount_percent"]] if column_map.get("discount_percent") is not None else None
             )
@@ -659,6 +1066,21 @@ def parse_line_items_advanced(
             line_total = parse_currency(
                 row.iloc[column_map["line_total"]] if column_map.get("line_total") is not None else None
             )
+
+            # Determine item type based on part number patterns or section
+            item_type = current_section
+            if item_type is None:
+                # Try to infer from part number
+                if part and any(prefix in part.upper() for prefix in ["CS-", "PS-", "SS-", "TS-"]):
+                    item_type = "Services"
+                elif part and any(prefix in part.upper() for prefix in ["SG", "FA", "AFF", "E-SERIES"]):
+                    item_type = "Hardware"
+                else:
+                    # Default based on description
+                    if description and any(keyword in description.lower() for keyword in ["service", "support", "deployment", "advisory"]):
+                        item_type = "Services"
+                    else:
+                        item_type = "Hardware"  # Default assumption
 
             item = {
                 "partNumber": part or None,
@@ -671,9 +1093,15 @@ def parse_line_items_advanced(
                 "discountPercent": discount_percent,
                 "discountAmount": discount_amount,
                 "lineTotal": line_total,
+                "itemType": item_type,
             }
 
-            if all(value is None for value in item.values()):
+            # Only skip if ALL meaningful fields are None (allow items with just part number)
+            meaningful_fields = {
+                "partNumber", "description", "quantity", "unitListPrice", 
+                "unitNetPrice", "extendedListPrice", "extendedNetPrice"
+            }
+            if all(item.get(key) is None for key in meaningful_fields):
                 continue
 
             items.append(item)
@@ -732,28 +1160,94 @@ def _build_column_map(header_labels: List[str]) -> Dict[str, Optional[int]]:
         "discount_amount": None,
         "line_total": None,
     }
+    
+    # First pass: identify extended columns explicitly (to avoid confusion with unit columns)
     for idx, label in enumerate(header_labels):
         lowered = label.lower()
+        # Extended columns must explicitly contain "ext" or "extended"
+        # Also handle "Estimated Ext." format
+        if mapping["ext_list"] is None:
+            if (("ext" in lowered or "extended" in lowered) and "list" in lowered and "unit" not in lowered) or \
+               ("estimated" in lowered and ("ext" in lowered or "ext." in lowered) and "list" in lowered):
+                mapping["ext_list"] = idx
+        if mapping["ext_net"] is None:
+            if (("ext" in lowered or "extended" in lowered) and "net" in lowered and "unit" not in lowered) or \
+               ("estimated" in lowered and ("ext" in lowered or "ext." in lowered) and "net" in lowered):
+                mapping["ext_net"] = idx
+    
+    # Second pass: identify other columns, being careful to avoid extended columns
+    for idx, label in enumerate(header_labels):
+        lowered = label.lower()
+        
+        # Skip if already mapped
+        if idx in mapping.values():
+            continue
+            
         if mapping["part"] is None and "part" in lowered and "number" in lowered:
             mapping["part"] = idx
         elif mapping["description"] is None and any(keyword in lowered for keyword in ("description", "product")):
             mapping["description"] = idx
         elif mapping["quantity"] is None and any(keyword in lowered for keyword in ("qty", "quantity")):
             mapping["quantity"] = idx
-        elif mapping["unit_list"] is None and "unit" in lowered and "list" in lowered:
-            mapping["unit_list"] = idx
-        elif mapping["unit_net"] is None and "unit" in lowered and "net" in lowered:
-            mapping["unit_net"] = idx
-        elif mapping["ext_list"] is None and ("ext" in lowered and "list" in lowered):
-            mapping["ext_list"] = idx
-        elif mapping["ext_net"] is None and ("ext" in lowered and "net" in lowered):
-            mapping["ext_net"] = idx
-        elif mapping["discount_percent"] is None and "%" in lowered:
+        # Unit columns: must contain "unit" and NOT be extended
+        # Also check for alternative column names like "Estimated Unit List Price", "Unit List Price", etc.
+        elif mapping["unit_list"] is None:
+            # Check for various unit list price column name patterns
+            if ("unit" in lowered and "list" in lowered) or \
+               ("estimated" in lowered and "unit" in lowered and "list" in lowered) or \
+               (lowered.startswith("unit") and "list" in lowered) or \
+               ("list" in lowered and "price" in lowered and "each" in lowered) or \
+               ("list" in lowered and "price" in lowered and "unit" in lowered):
+                # Make sure it's not an extended column
+                if "ext" not in lowered and "extended" not in lowered:
+                    mapping["unit_list"] = idx
+        elif mapping["unit_net"] is None:
+            # Check for various unit net price column name patterns
+            if ("unit" in lowered and "net" in lowered) or \
+               ("estimated" in lowered and "unit" in lowered and "net" in lowered) or \
+               (lowered.startswith("unit") and "net" in lowered) or \
+               ("net" in lowered and "price" in lowered and "each" in lowered) or \
+               ("net" in lowered and "price" in lowered and "unit" in lowered):
+                # Make sure it's not an extended column
+                if "ext" not in lowered and "extended" not in lowered:
+                    mapping["unit_net"] = idx
+        # Extended columns (if not already found in first pass)
+        # Also check for alternative column names like "Estimated Ext. List Price", "Extended List Price", etc.
+        elif mapping["ext_list"] is None:
+            if (("ext" in lowered or "extended" in lowered) and "list" in lowered) or \
+               ("estimated" in lowered and ("ext" in lowered or "extended" in lowered) and "list" in lowered):
+                mapping["ext_list"] = idx
+        elif mapping["ext_net"] is None:
+            if (("ext" in lowered or "extended" in lowered) and "net" in lowered) or \
+               ("estimated" in lowered and ("ext" in lowered or "extended" in lowered) and "net" in lowered):
+                mapping["ext_net"] = idx
+        elif mapping["discount_percent"] is None and "%" in lowered and "discount" in lowered:
             mapping["discount_percent"] = idx
         elif mapping["discount_amount"] is None and "discount" in lowered and "%" not in lowered:
             mapping["discount_amount"] = idx
         elif mapping["line_total"] is None and "line" in lowered and "total" in lowered:
             mapping["line_total"] = idx
+    
+    # Fallback: If we still don't have unit prices but have extended prices, try to infer unit columns
+    # by looking for columns that contain "price" and "each" or just "price" without "extended"
+    if mapping["unit_list"] is None and mapping["ext_list"] is not None:
+        for idx, label in enumerate(header_labels):
+            lowered = label.lower()
+            if idx not in mapping.values():
+                # Look for columns with "list" and "price" that aren't extended
+                if "list" in lowered and "price" in lowered and "ext" not in lowered and "extended" not in lowered:
+                    mapping["unit_list"] = idx
+                    break
+    
+    if mapping["unit_net"] is None and mapping["ext_net"] is not None:
+        for idx, label in enumerate(header_labels):
+            lowered = label.lower()
+            if idx not in mapping.values():
+                # Look for columns with "net" and "price" that aren't extended
+                if "net" in lowered and "price" in lowered and "ext" not in lowered and "extended" not in lowered:
+                    mapping["unit_net"] = idx
+                    break
+    
     return mapping
 
 

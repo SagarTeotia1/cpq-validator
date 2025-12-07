@@ -16,14 +16,31 @@ def parse_currency(value: Optional[str]) -> Optional[float]:
     if value is None:
         return None
     text = str(value)
-    # Remove currency symbols and spaces
-    # Normalize Rs patterns like "Rs 1,23,456.78" or "Rs.1,23,456.78"
+    
+    # Remove all currency symbols including ¥, $, €, ₹, etc.
+    # Handle various currency symbol formats
     text = re.sub(r"\bRs\.?\s*", "", text, flags=re.IGNORECASE)
-    text = re.sub(r"[\s$,€₹]|USD|INR", "", text, flags=re.IGNORECASE)
-    # Remove thousand separators
-    text = text.replace(",", "")
-    if text == "" or text == "-":
+    # Remove common currency symbols: $, €, ₹, ¥, £, etc.
+    text = re.sub(r"[\s$€₹¥£]|USD|INR|CNY|EUR|GBP", "", text, flags=re.IGNORECASE)
+    
+    # Remove thousand separators (commas)
+    # Be careful: only remove commas that are thousand separators, not decimal separators
+    # Check if there's a decimal point - if so, only remove commas before the decimal point
+    if '.' in text:
+        parts = text.split('.')
+        # Remove commas from the integer part (before decimal)
+        parts[0] = parts[0].replace(",", "")
+        text = '.'.join(parts)
+    else:
+        # No decimal point, remove all commas
+        text = text.replace(",", "")
+    
+    # Remove any remaining non-numeric characters except decimal point and minus sign
+    text = re.sub(r"[^\d.\-]", "", text)
+    
+    if text == "" or text == "-" or text == ".":
         return None
+    
     try:
         return float(text)
     except ValueError:
@@ -84,7 +101,11 @@ def floats_match(a: Optional[float], b: Optional[float], tolerance: float) -> bo
     if a is None and b is None:
         return True
     if a is None or b is None:
-        return False
+        # Treat None/null and 0.0 as equivalent
+        if a is None:
+            return abs(float(b)) <= tolerance
+        if b is None:
+            return abs(float(a)) <= tolerance
     # Round to 2 decimals to minimize OCR rounding drift
     a_ = round(float(a), 2)
     b_ = round(float(b), 2)
@@ -108,6 +129,70 @@ def strings_close(a: Optional[str], b: Optional[str], *, threshold: float = 0.9)
         return False
     ratio = SequenceMatcher(None, na, nb).ratio()
     return ratio >= threshold
+
+
+def _extract_meaningful_words(text: str) -> set[str]:
+    """Extract meaningful words from text (excluding very short words and common stop words)."""
+    # Normalize: lowercase, replace punctuation with spaces
+    normalized = re.sub(r'[^\w\s]', ' ', text.lower())
+    # Split into words
+    words = normalized.split()
+    # Filter: keep words that are at least 3 characters and not common stop words
+    stop_words = {'the', 'for', 'and', 'with', 'from', 'this', 'that', 'are', 'was', 'were'}
+    meaningful = {w for w in words if len(w) >= 3 and w not in stop_words}
+    return meaningful
+
+
+def strings_share_key_phrases(a: Optional[str], b: Optional[str], min_shared_words: int = 2) -> bool:
+    """Check if strings share enough meaningful words/phrases to be considered similar.
+    
+    This is useful for cases like:
+    - "Agreement for 11/21 Wells Fargo Bank-Opp-201981354-test" 
+    - "Wells Fargo Bank_Master Agreement (WF 9085)"
+    Both contain "Agreement" and "Wells Fargo Bank", so they match.
+    
+    Args:
+        a: First string
+        b: Second string
+        min_shared_words: Minimum number of meaningful words that must be shared (default: 2)
+    
+    Returns:
+        True if strings share enough meaningful words
+    """
+    if a is None or b is None:
+        return False
+    
+    na = str(a).strip()
+    nb = str(b).strip()
+    
+    if not na or not nb:
+        return False
+    
+    # Extract meaningful words from both strings
+    words_a = _extract_meaningful_words(na)
+    words_b = _extract_meaningful_words(nb)
+    
+    # Check for shared words
+    shared_words = words_a.intersection(words_b)
+    
+    # If we have enough shared meaningful words, it's a match
+    if len(shared_words) >= min_shared_words:
+        return True
+    
+    # Also check for multi-word phrases (e.g., "Wells Fargo Bank")
+    # Split into 2-3 word phrases and check for matches
+    words_a_list = list(words_a)
+    words_b_list = list(words_b)
+    
+    # Check 2-word phrases
+    for i in range(len(words_a_list) - 1):
+        phrase_a = f"{words_a_list[i]} {words_a_list[i+1]}"
+        for j in range(len(words_b_list) - 1):
+            phrase_b = f"{words_b_list[j]} {words_b_list[j+1]}"
+            if phrase_a == phrase_b:
+                return True
+    
+    return False
 
 
 def strings_contain_match(a: Optional[str], b: Optional[str], *, extract_numbers: bool = False) -> bool:
@@ -143,6 +228,10 @@ def strings_contain_match(a: Optional[str], b: Optional[str], *, extract_numbers
     na_lower = na.lower()
     nb_lower = nb.lower()
     if na_lower in nb_lower or nb_lower in na_lower:
+        return True
+    
+    # Check if strings share key phrases (e.g., "Wells Fargo Bank" and "Agreement")
+    if strings_share_key_phrases(na, nb, min_shared_words=2):
         return True
     
     # If extract_numbers is True, extract numeric identifiers and compare

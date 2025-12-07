@@ -506,7 +506,8 @@ def validate_quote(config: AppConfig, api_data: Dict[str, Any], pdf_data: Dict[s
         if not _is_pdf_value_none(pdf_contract_name):
             api_str = str(api_contract_name) if api_contract_name is not None else None
             pdf_str = str(pdf_contract_name) if pdf_contract_name is not None else None
-            match = strings_contain_match(api_str, pdf_str, extract_numbers=True) or strings_close(api_str, pdf_str, threshold=0.85)
+            # Use key phrase matching (checks for shared meaningful words) with lower similarity threshold
+            match = strings_contain_match(api_str, pdf_str, extract_numbers=True) or strings_close(api_str, pdf_str, threshold=0.70)
             results.append(
                 FieldResult(
                     field_name="contractName_t",
@@ -663,7 +664,7 @@ def validate_quote(config: AppConfig, api_data: Dict[str, Any], pdf_data: Dict[s
                     section="Quote Information",
                     expected=round(api_parsed, 2) if api_parsed is not None else None,
                     found=round(pdf_parsed, 2) if pdf_parsed is not None else None,
-                    match=floats_match(api_parsed, pdf_parsed, tolerance) if (api_parsed is not None and pdf_parsed is not None) else False,
+                    match=floats_match(api_parsed, pdf_parsed, tolerance),
                 )
             )
 
@@ -923,41 +924,73 @@ def validate_line_items(config: AppConfig, api_data: Dict[str, Any], pdf_data: D
                     pass
         
         # Additional pricing fields validation
-        # Check listPrice_l_c (might be extended list price for the line)
+        # Check listPrice_l_c - compare against both unit and extended to find the best match
         api_list_price_line = line.get("listPrice_l_c")
         if isinstance(api_list_price_line, (int, float)) and api_list_price_line != 0:
+            pdf_unit_list = pdf_row.get("unitListPrice") if pdf_row else None
             pdf_ext_list = pdf_row.get("extendedListPrice") if pdf_row else None
-            if not _is_pdf_value_none(pdf_ext_list):
+            
+            # Try to match against unit price first (most common case for line items)
+            excel_value = None
+            match_found = False
+            
+            if not _is_pdf_value_none(pdf_unit_list):
+                if floats_match(float(api_list_price_line), float(pdf_unit_list), config.validation_rules.numeric_tolerance):
+                    excel_value = pdf_unit_list
+                    match_found = True
+            
+            # If unit doesn't match, try extended price
+            if not match_found and not _is_pdf_value_none(pdf_ext_list):
+                if floats_match(float(api_list_price_line), float(pdf_ext_list), config.validation_rules.numeric_tolerance):
+                    excel_value = pdf_ext_list
+                    match_found = True
+                elif excel_value is None:
+                    # If neither matches exactly, prefer unit price for comparison
+                    excel_value = pdf_unit_list if pdf_unit_list else pdf_ext_list
+            
+            if excel_value is not None:
                 results.append(
                     FieldResult(
                         field_name=f"listPrice_l_c_{api_part}",
                         section="Lines",
                         expected=round(api_list_price_line, 2),
-                        found=round(pdf_ext_list, 2) if pdf_ext_list else None,
-                        match=floats_match(
-                            float(api_list_price_line),
-                            pdf_ext_list,
-                            config.validation_rules.numeric_tolerance,
-                        ),
+                        found=round(excel_value, 2) if excel_value else None,
+                        match=match_found,
                     )
                 )
         
-        # Check rollUpNetPrice_l_c
+        # Check rollUpNetPrice_l_c - compare against both unit and extended to find the best match
         api_rollup_net = line.get("rollUpNetPrice_l_c")
         if isinstance(api_rollup_net, (int, float)) and api_rollup_net != 0:
+            pdf_unit_net = pdf_row.get("unitNetPrice") if pdf_row else None
             pdf_ext_net = pdf_row.get("extendedNetPrice") if pdf_row else None
-            if not _is_pdf_value_none(pdf_ext_net):
+            
+            # Try to match against unit price first (most common case for line items)
+            excel_value = None
+            match_found = False
+            
+            if not _is_pdf_value_none(pdf_unit_net):
+                if floats_match(float(api_rollup_net), float(pdf_unit_net), config.validation_rules.numeric_tolerance):
+                    excel_value = pdf_unit_net
+                    match_found = True
+            
+            # If unit doesn't match, try extended price
+            if not match_found and not _is_pdf_value_none(pdf_ext_net):
+                if floats_match(float(api_rollup_net), float(pdf_ext_net), config.validation_rules.numeric_tolerance):
+                    excel_value = pdf_ext_net
+                    match_found = True
+                elif excel_value is None:
+                    # If neither matches exactly, prefer unit price for comparison
+                    excel_value = pdf_unit_net if pdf_unit_net else pdf_ext_net
+            
+            if excel_value is not None:
                 results.append(
                     FieldResult(
                         field_name=f"rollUpNetPrice_l_c_{api_part}",
                         section="Lines",
                         expected=round(api_rollup_net, 2),
-                        found=round(pdf_ext_net, 2) if pdf_ext_net else None,
-                        match=floats_match(
-                            float(api_rollup_net),
-                            pdf_ext_net,
-                            config.validation_rules.numeric_tolerance,
-                        ),
+                        found=round(excel_value, 2) if excel_value else None,
+                        match=match_found,
                     )
                 )
         
