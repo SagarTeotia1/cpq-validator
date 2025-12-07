@@ -247,84 +247,116 @@ def _evaluate_extended_field(field: ExtendedField, api_val: Any, doc_val: Any, c
 
 
 def validate_quote(config: AppConfig, api_data: Dict[str, Any], pdf_data: Dict[str, Any], *, transaction_id: Optional[str] = None, pdf_filename: Optional[str] = None) -> ValidationResult:
+    """
+    Validate quote data following the exact structure of the Excel document:
+    1. Header Section (Quote Name, Dates, Contact Info, Status)
+    2. Line Items (Hardware & Services)
+    3. Grand Totals (List Total, Discount, Net Total)
+    4. Quote Information (Additional Details: Incoterm, Contract, Payment Terms, etc.)
+    """
     results: List[FieldResult] = []
 
-    # Quote Number (text exact, case-insensitive, with containment matching)
-    api_quote_number = api_data.get("quoteNumber_t_c") or api_data.get("_document_number") or api_data.get("_id")
-    pdf_quote_number = pdf_data.get("quoteNumber_t_c")
-    if not _is_pdf_value_none(pdf_quote_number):
-        # Use containment matching to handle cases like:
-        # API: "174044" vs PDF: "174044 Quote 174044 for Arrow Electronics Inc."
-        # API: "CPQ-174044" vs PDF: "174044"
-        api_str = str(api_quote_number) if api_quote_number is not None else None
-        pdf_str = str(pdf_quote_number) if pdf_quote_number is not None else None
-        match = strings_contain_match(api_str, pdf_str, extract_numbers=True) or strings_close(api_str, pdf_str, threshold=0.85)
-        results.append(
-            FieldResult(
-                field_name="quoteNumber_t_c",
-                section="Header",
-                expected=api_quote_number,
-                found=pdf_quote_number,
-                match=match,
-            )
-        )
-
-    # Transaction ID (text exact across multiple API fallbacks, with containment matching)
-    # API often exposes: transactionID_t (e.g., CPQ-173670), quoteTransactionID_t_c, bs_id, _id
-    api_tx_candidates = [
-        api_data.get("transactionID_t"),
-        api_data.get("quoteTransactionID_t_c"),
-        api_data.get("bs_id"),
-        api_data.get("_id"),
-        api_data.get("sourceBS_ID_t_c"),
-    ]
-    api_tx_expected = next((v for v in api_tx_candidates if v is not None), None)
-    pdf_tx = pdf_data.get("transactionID_t")
-    if not _is_pdf_value_none(pdf_tx):
-        # Try exact digit match first, then containment match
-        api_digits = only_digits(str(api_tx_expected) if api_tx_expected else None)
-        pdf_digits = only_digits(str(pdf_tx) if pdf_tx else None)
-        match = (api_digits == pdf_digits) if (api_digits and pdf_digits) else strings_contain_match(
-            str(api_tx_expected) if api_tx_expected else None,
-            str(pdf_tx) if pdf_tx else None,
-            extract_numbers=True
-        )
-        results.append(
-            FieldResult(
-                field_name="transactionID_t",
-                section="Header",
-                expected=api_tx_expected,
-                found=pdf_tx,
-                match=match,
-            )
-        )
-
-    # Net Price - Check ALL possible fields with priority
-    api_net_candidates = [
-        api_data.get("quoteNetPrice_t_c"),
-        api_data.get("extNetPrice_t_c"),
-        api_data.get("netPrice_t_c"),
-        api_data.get("totalOneTimeNetAmount_t"),
-        api_data.get("_transaction_total"),
-    ]
-    api_net = next((v for v in api_net_candidates if v is not None), None)
-    api_net_f = parse_currency(api_net if isinstance(api_net, str) else str(api_net) if api_net is not None else None)
-    pdf_net_f = pdf_data.get("quoteNetPrice_t_c")
+    # ========================================================================
+    # SECTION 1: HEADER SECTION (Top of Document)
+    # ========================================================================
     
-    # Only validate if PDF has a value (critical field, but skip if truly missing)
-    if not _is_pdf_value_none(pdf_net_f):
+    # 1. Quote Name
+    api_quote_name = api_data.get("quoteNameTextArea_t_c") or api_data.get("transactionName_t")
+    pdf_quote_name = pdf_data.get("quoteNameTextArea_t_c")
+    if not _is_pdf_value_none(pdf_quote_name):
+        api_str = str(api_quote_name) if api_quote_name else None
+        pdf_str = str(pdf_quote_name) if pdf_quote_name else None
+        match = strings_contain_match(api_str, pdf_str, extract_numbers=True) or strings_close(api_str, pdf_str, threshold=0.8)
         results.append(
             FieldResult(
-                field_name="quoteNetPrice_t_c",
-                section="Summary",
-                expected=round(api_net_f, 2) if api_net_f is not None else None,
-                found=round(pdf_net_f, 2) if pdf_net_f is not None else None,
-                match=floats_match(api_net_f, pdf_net_f, config.validation_rules.numeric_tolerance),
-                message=f"CRITICAL: Net Grand Total validation" if not floats_match(api_net_f, pdf_net_f, config.validation_rules.numeric_tolerance) else None,
+                field_name="quoteNameTextArea_t_c",
+                section="Header",
+                expected=api_quote_name,
+                found=pdf_quote_name,
+                match=match,
             )
         )
 
-    # List Total - Check ALL possible fields with priority
+    # 2. Quote Date
+    api_created = api_data.get("createdDate_t")
+    pdf_created = pdf_data.get("createdDate_t")
+    if not _is_pdf_value_none(pdf_created):
+        results.append(
+            FieldResult(
+                field_name="createdDate_t",
+                section="Header",
+                expected=api_created,
+                found=pdf_created,
+                match=(
+                    (parse_date(api_created) == parse_date(pdf_created))
+                    if (api_created or pdf_created)
+                    else True
+                ),
+            )
+        )
+
+    # 3. Quote Valid Until
+    api_expires = api_data.get("expiresOnDate_t_c")
+    pdf_expires = pdf_data.get("expiresOnDate_t_c")
+    if not _is_pdf_value_none(pdf_expires):
+        results.append(
+            FieldResult(
+                field_name="expiresOnDate_t_c",
+                section="Header",
+                expected=api_expires,
+                found=pdf_expires,
+                match=(
+                    (parse_date(api_expires) == parse_date(pdf_expires))
+                    if (api_expires or pdf_expires)
+                    else True
+                ),
+            )
+        )
+
+    # 4. Contact Name (if available in PDF)
+    # Note: Contact name may not be in standard fields, skip if not present
+
+    # 5. Email (if available in PDF)
+    # Note: Email may not be in standard fields, skip if not present
+
+    # 6. Quote To (if available in PDF)
+    # Note: Quote To may not be in standard fields, skip if not present
+
+    # 7. Quote From (if available in PDF)
+    # Note: Quote From may not be in standard fields, skip if not present
+
+    # 8. End Customer (if available in PDF)
+    # Note: End Customer may not be in standard fields, skip if not present
+
+    # 9. Quote Status
+    api_status_candidates = [
+        (api_data.get("quoteStatus_t_c") or {}).get("displayValue") if isinstance(api_data.get("quoteStatus_t_c"), dict) else api_data.get("quoteStatus_t_c"),
+        (api_data.get("status_t") or {}).get("displayValue") if isinstance(api_data.get("status_t"), dict) else api_data.get("status_t"),
+    ]
+    api_status = next((v for v in api_status_candidates if v is not None), None)
+    pdf_status = pdf_data.get("status_t")
+    if not _is_pdf_value_none(pdf_status):
+        results.append(
+            FieldResult(
+                field_name="status_t",
+                section="Header",
+                expected=api_status,
+                found=pdf_status,
+                match=strings_close(api_status, pdf_status, threshold=0.9),
+            )
+        )
+
+    # ========================================================================
+    # SECTION 2: LINE ITEMS (Hardware & Services)
+    # ========================================================================
+    # Validate line items as they appear in the document (before totals)
+    validate_line_items(config, api_data, pdf_data, results)
+
+    # ========================================================================
+    # SECTION 3: GRAND TOTALS
+    # ========================================================================
+    
+    # 1. List Grand Total
     api_list_candidates = [
         api_data.get("quoteListPrice_t_c"),
         api_data.get("totalOneTimeListAmount_t"),
@@ -343,49 +375,19 @@ def validate_quote(config: AppConfig, api_data: Dict[str, Any], pdf_data: Dict[s
     pdf_list = pdf_data.get("quoteListPrice_t_c")
     api_list_parsed = parse_currency(str(api_list) if api_list is not None else None)
     
-    # Only validate if PDF has a value (critical field, but skip if truly missing)
     if not _is_pdf_value_none(pdf_list):
         results.append(
             FieldResult(
                 field_name="quoteListPrice_t_c",
-                section="Summary",
+                section="Grand Totals",
                 expected=round(api_list_parsed, 2) if api_list_parsed is not None else None,
                 found=round(pdf_list, 2) if pdf_list is not None else None,
                 match=floats_match(api_list_parsed, pdf_list, config.validation_rules.numeric_tolerance),
-                message=f"CRITICAL: List Grand Total validation (Unit prices sum to this)" if not floats_match(api_list_parsed, pdf_list, config.validation_rules.numeric_tolerance) else None,
-            )
-        )
-    
-    # Additional pricing validations
-    # Extended Net Price
-    api_ext_net = api_data.get("extNetPrice_t_c")
-    if api_ext_net is not None and not _is_pdf_value_none(pdf_net_f):
-        api_ext_net_f = parse_currency(str(api_ext_net) if not isinstance(api_ext_net, (int, float)) else api_ext_net)
-        results.append(
-            FieldResult(
-                field_name="extNetPrice_t_c",
-                section="Summary",
-                expected=round(api_ext_net_f, 2) if api_ext_net_f is not None else None,
-                found=round(pdf_net_f, 2) if pdf_net_f is not None else None,
-                match=floats_match(api_ext_net_f, pdf_net_f, config.validation_rules.numeric_tolerance),
-            )
-        )
-    
-    # Desired Net Price
-    api_desired_net = api_data.get("quoteDesiredNetPrice_t_c")
-    if api_desired_net is not None and not _is_pdf_value_none(pdf_net_f):
-        api_desired_net_f = parse_currency(str(api_desired_net) if not isinstance(api_desired_net, (int, float)) else api_desired_net)
-        results.append(
-            FieldResult(
-                field_name="quoteDesiredNetPrice_t_c",
-                section="Summary",
-                expected=round(api_desired_net_f, 2) if api_desired_net_f is not None else None,
-                found=round(pdf_net_f, 2) if pdf_net_f is not None else None,
-                match=floats_match(api_desired_net_f, pdf_net_f, config.validation_rules.numeric_tolerance),
+                message=f"CRITICAL: List Grand Total validation" if not floats_match(api_list_parsed, pdf_list, config.validation_rules.numeric_tolerance) else None,
             )
         )
 
-    # Discount % (percentage tolerance)
+    # 2. Total Discount
     api_disc = api_data.get("transactionTotalDiscountPercent_t") or api_data.get("quoteCurrentDiscount_t_c")
     pdf_disc = pdf_data.get("quoteCurrentDiscount_t_c")
     if not _is_pdf_value_none(pdf_disc):
@@ -400,87 +402,57 @@ def validate_quote(config: AppConfig, api_data: Dict[str, Any], pdf_data: Dict[s
         results.append(
             FieldResult(
                 field_name="quoteCurrentDiscount_t_c",
-                section="Summary",
+                section="Grand Totals",
                 expected=api_disc_f,
                 found=pdf_disc_f,
                 match=floats_match(api_disc_f, pdf_disc_f, config.validation_rules.percentage_tolerance),
             )
         )
 
-    # Currency validation removed - not needed
-
-    # Price List (exact string)
-    api_pricelist = (
-        (api_data.get("priceList_t_c") or {}).get("value")
-        if isinstance(api_data.get("priceList_t_c"), dict)
-        else api_data.get("priceList_t_c")
-    )
-    pdf_pricelist = pdf_data.get("priceList_t_c")
-    if not _is_pdf_value_none(pdf_pricelist):
-        results.append(
-            FieldResult(
-                field_name="priceList_t_c",
-                section="Header",
-                expected=api_pricelist,
-                found=pdf_pricelist,
-                match=strings_close(api_pricelist, pdf_pricelist, threshold=0.95),
-            )
-        )
-
-    # Status (exact string)
-    api_status_candidates = [
-        (api_data.get("quoteStatus_t_c") or {}).get("displayValue") if isinstance(api_data.get("quoteStatus_t_c"), dict) else api_data.get("quoteStatus_t_c"),
-        (api_data.get("status_t") or {}).get("displayValue") if isinstance(api_data.get("status_t"), dict) else api_data.get("status_t"),
+    # 3. Net Grand Total
+    api_net_candidates = [
+        api_data.get("quoteNetPrice_t_c"),
+        api_data.get("extNetPrice_t_c"),
+        api_data.get("netPrice_t_c"),
+        api_data.get("totalOneTimeNetAmount_t"),
+        api_data.get("_transaction_total"),
     ]
-    api_status = next((v for v in api_status_candidates if v is not None), None)
-    pdf_status = pdf_data.get("status_t")
-    if not _is_pdf_value_none(pdf_status):
-        results.append(
-            FieldResult(
-                field_name="status_t",
-                section="Header",
-                expected=api_status,
-                found=pdf_status,
-                match=strings_close(api_status, pdf_status, threshold=0.9),
-            )
-        )
-
-    # Dates (format-agnostic)
-    api_created = api_data.get("createdDate_t")
-    pdf_created = pdf_data.get("createdDate_t")
-    if not _is_pdf_value_none(pdf_created):
-        results.append(
-            FieldResult(
-                field_name="createdDate_t",
-                section="Header",
-                expected=api_created,
-                found=pdf_created,
-                match=(
-                    (parse_date(api_created) == parse_date(pdf_created))
-                    if (api_created or pdf_created)
-                    else True
-                ),
-            )
-        )
+    api_net = next((v for v in api_net_candidates if v is not None), None)
+    api_net_f = parse_currency(api_net if isinstance(api_net, str) else str(api_net) if api_net is not None else None)
+    pdf_net_f = pdf_data.get("quoteNetPrice_t_c")
     
-    api_expires = api_data.get("expiresOnDate_t_c")
-    pdf_expires = pdf_data.get("expiresOnDate_t_c")
-    if not _is_pdf_value_none(pdf_expires):
+    if not _is_pdf_value_none(pdf_net_f):
         results.append(
             FieldResult(
-                field_name="expiresOnDate_t_c",
-                section="Header",
-                expected=api_expires,
-                found=pdf_expires,
-                match=(
-                    (parse_date(api_expires) == parse_date(pdf_expires))
-                    if (api_expires or pdf_expires)
-                    else True
-                ),
+                field_name="quoteNetPrice_t_c",
+                section="Grand Totals",
+                expected=round(api_net_f, 2) if api_net_f is not None else None,
+                found=round(pdf_net_f, 2) if pdf_net_f is not None else None,
+                match=floats_match(api_net_f, pdf_net_f, config.validation_rules.numeric_tolerance),
+                message=f"CRITICAL: Net Grand Total validation" if not floats_match(api_net_f, pdf_net_f, config.validation_rules.numeric_tolerance) else None,
             )
         )
 
-    # Incoterm (exact string, case-insensitive)
+    # ========================================================================
+    # SECTION 4: QUOTE INFORMATION (Additional Details)
+    # ========================================================================
+    
+    # Quote Name (repeated in Quote Information section)
+    # Already validated above, skip duplicate
+
+    # Quote Date (repeated in Quote Information section)
+    # Already validated above, skip duplicate
+
+    # Quote Valid Until (repeated in Quote Information section)
+    # Already validated above, skip duplicate
+
+    # Contact Name, Phone, Email, Quote To, Quote From, End Customer
+    # (These may not be in standard API fields, skip if not present)
+
+    # Ship To, Software Delivery Contact, Software Delivery Email
+    # (These may not be in standard API fields, skip if not present)
+
+    # Incoterm
     api_incoterm = (
         (api_data.get("incoterm_t_c") or {}).get("displayValue")
         if isinstance(api_data.get("incoterm_t_c"), dict)
@@ -491,32 +463,23 @@ def validate_quote(config: AppConfig, api_data: Dict[str, Any], pdf_data: Dict[s
         results.append(
             FieldResult(
                 field_name="incoterm_t_c",
-                section="Header",
+                section="Quote Information",
                 expected=api_incoterm,
                 found=pdf_incoterm,
                 match=strings_close(api_incoterm, pdf_incoterm, threshold=0.92),
             )
         )
 
-    # Payment Terms (exact)
-    api_payterms = (
-        (api_data.get("paymentTerms_t_c") or {}).get("displayValue")
-        if isinstance(api_data.get("paymentTerms_t_c"), dict)
-        else api_data.get("paymentTerms_t_c")
-    )
-    pdf_payterms = pdf_data.get("paymentTerms_t_c")
-    if not _is_pdf_value_none(pdf_payterms):
-        results.append(
-            FieldResult(
-                field_name="paymentTerms_t_c",
-                section="Header",
-                expected=api_payterms,
-                found=pdf_payterms,
-                match=strings_close(api_payterms, pdf_payterms, threshold=0.92),
-            )
-        )
+    # Quote Status (repeated in Quote Information section)
+    # Already validated above, skip duplicate
 
-    # Order Type (exact)
+    # Contingency (if available in PDF)
+    # Note: May not be in standard fields, skip if not present
+
+    # Contract Number (if available in PDF)
+    # Note: May not be in standard fields, skip if not present
+
+    # Order Type
     api_order_type = (
         (api_data.get("orderType_t_c") or {}).get("displayValue")
         if isinstance(api_data.get("orderType_t_c"), dict)
@@ -527,35 +490,117 @@ def validate_quote(config: AppConfig, api_data: Dict[str, Any], pdf_data: Dict[s
         results.append(
             FieldResult(
                 field_name="orderType_t_c",
-                section="Header",
+                section="Quote Information",
                 expected=api_order_type,
                 found=pdf_order_type,
                 match=strings_close(api_order_type, pdf_order_type, threshold=0.92),
             )
         )
 
-    # Quote Name (exact, with containment matching for partial matches)
-    api_quote_name = api_data.get("quoteNameTextArea_t_c") or api_data.get("transactionName_t")
-    pdf_quote_name = pdf_data.get("quoteNameTextArea_t_c")
-    if not _is_pdf_value_none(pdf_quote_name):
-        api_str = str(api_quote_name) if api_quote_name else None
-        pdf_str = str(pdf_quote_name) if pdf_quote_name else None
-        # Use containment match first (more lenient), then fall back to similarity
-        match = strings_contain_match(api_str, pdf_str, extract_numbers=True) or strings_close(api_str, pdf_str, threshold=0.8)
+    # Contract Name
+    api_contract_name = api_data.get("contractName_t")
+    if api_contract_name is not None:
+        if isinstance(api_contract_name, dict):
+            api_contract_name = api_contract_name.get("value") or api_contract_name.get("displayValue")
+        pdf_contract_name = pdf_data.get("contractName_t")
+        if not _is_pdf_value_none(pdf_contract_name):
+            api_str = str(api_contract_name) if api_contract_name is not None else None
+            pdf_str = str(pdf_contract_name) if pdf_contract_name is not None else None
+            match = strings_contain_match(api_str, pdf_str, extract_numbers=True) or strings_close(api_str, pdf_str, threshold=0.85)
+            results.append(
+                FieldResult(
+                    field_name="contractName_t",
+                    section="Quote Information",
+                    expected=api_str,
+                    found=pdf_str,
+                    match=match,
+                )
+            )
+
+    # Payment Terms
+    api_payterms = (
+        (api_data.get("paymentTerms_t_c") or {}).get("displayValue")
+        if isinstance(api_data.get("paymentTerms_t_c"), dict)
+        else api_data.get("paymentTerms_t_c")
+    )
+    pdf_payterms = pdf_data.get("paymentTerms_t_c")
+    if not _is_pdf_value_none(pdf_payterms):
         results.append(
             FieldResult(
-                field_name="quoteNameTextArea_t_c",
-                section="Header",
-                expected=api_quote_name,
-                found=pdf_quote_name,
+                field_name="paymentTerms_t_c",
+                section="Quote Information",
+                expected=api_payterms,
+                found=pdf_payterms,
+                match=strings_close(api_payterms, pdf_payterms, threshold=0.92),
+            )
+        )
+
+    # Price List
+    api_pricelist = (
+        (api_data.get("priceList_t_c") or {}).get("value")
+        if isinstance(api_data.get("priceList_t_c"), dict)
+        else api_data.get("priceList_t_c")
+    )
+    pdf_pricelist = pdf_data.get("priceList_t_c")
+    if not _is_pdf_value_none(pdf_pricelist):
+        results.append(
+            FieldResult(
+                field_name="priceList_t_c",
+                section="Quote Information",
+                expected=api_pricelist,
+                found=pdf_pricelist,
+                match=strings_close(api_pricelist, pdf_pricelist, threshold=0.95),
+            )
+        )
+
+    # Transaction ID (if available)
+    api_tx_candidates = [
+        api_data.get("transactionID_t"),
+        api_data.get("quoteTransactionID_t_c"),
+        api_data.get("bs_id"),
+        api_data.get("_id"),
+        api_data.get("sourceBS_ID_t_c"),
+    ]
+    api_tx_expected = next((v for v in api_tx_candidates if v is not None), None)
+    pdf_tx = pdf_data.get("transactionID_t")
+    if not _is_pdf_value_none(pdf_tx):
+        api_digits = only_digits(str(api_tx_expected) if api_tx_expected else None)
+        pdf_digits = only_digits(str(pdf_tx) if pdf_tx else None)
+        match = (api_digits == pdf_digits) if (api_digits and pdf_digits) else strings_contain_match(
+            str(api_tx_expected) if api_tx_expected else None,
+            str(pdf_tx) if pdf_tx else None,
+            extract_numbers=True
+        )
+        results.append(
+            FieldResult(
+                field_name="transactionID_t",
+                section="Quote Information",
+                expected=api_tx_expected,
+                found=pdf_tx,
                 match=match,
             )
         )
-    
-    # Additional Header Attributes
+
+    # Quote Number (for reference, if different from quote name)
+    api_quote_number = api_data.get("quoteNumber_t_c") or api_data.get("_document_number") or api_data.get("_id")
+    pdf_quote_number = pdf_data.get("quoteNumber_t_c")
+    if not _is_pdf_value_none(pdf_quote_number):
+        api_str = str(api_quote_number) if api_quote_number is not None else None
+        pdf_str = str(pdf_quote_number) if pdf_quote_number is not None else None
+        match = strings_contain_match(api_str, pdf_str, extract_numbers=True) or strings_close(api_str, pdf_str, threshold=0.85)
+        results.append(
+            FieldResult(
+                field_name="quoteNumber_t_c",
+                section="Quote Information",
+                expected=api_quote_number,
+                found=pdf_quote_number,
+                match=match,
+            )
+        )
+
+    # Additional Header Attributes (if present in PDF)
     additional_header_fields = [
         ("freightTerms_t_c", "Freight Terms"),
-        ("contractName_t", "Contract Name"),
         ("contractStartDate_t", "Contract Start Date"),
         ("contractEndDate_t", "Contract End Date"),
         ("lastUpdatedDate_t", "Last Updated Date"),
@@ -570,24 +615,22 @@ def validate_quote(config: AppConfig, api_data: Dict[str, Any], pdf_data: Dict[s
             if isinstance(api_val, dict):
                 api_val = api_val.get("value") or api_val.get("displayValue")
             pdf_val = pdf_data.get(field)
-            # Skip validation if PDF value is None/empty
             if _is_pdf_value_none(pdf_val):
                 continue
             api_str = str(api_val) if api_val is not None else None
             pdf_str = str(pdf_val) if pdf_val is not None else None
-            # Use containment matching for better flexibility
             match = strings_contain_match(api_str, pdf_str, extract_numbers=True) or strings_close(api_str, pdf_str, threshold=0.85)
             results.append(
                 FieldResult(
                     field_name=field,
-                    section="Header",
+                    section="Quote Information",
                     expected=api_str,
                     found=pdf_str,
                     match=match,
                 )
             )
     
-    # Additional Pricing Attributes
+    # Additional Pricing Attributes (if present in PDF)
     additional_pricing_fields = [
         ("extNetPrice_t_c", "Extended Net Price", True),
         ("quoteDesiredNetPrice_t_c", "Desired Net Price", True),
@@ -597,7 +640,6 @@ def validate_quote(config: AppConfig, api_data: Dict[str, Any], pdf_data: Dict[s
     for field, label, is_currency in additional_pricing_fields:
         api_val = api_data.get(field)
         pdf_val = pdf_data.get(field)
-        # Skip validation if PDF value is None/empty
         if _is_pdf_value_none(pdf_val):
             continue
         if api_val is not None or pdf_val is not None:
@@ -618,14 +660,14 @@ def validate_quote(config: AppConfig, api_data: Dict[str, Any], pdf_data: Dict[s
             results.append(
                 FieldResult(
                     field_name=field,
-                    section="Summary",
+                    section="Quote Information",
                     expected=round(api_parsed, 2) if api_parsed is not None else None,
                     found=round(pdf_parsed, 2) if pdf_parsed is not None else None,
                     match=floats_match(api_parsed, pdf_parsed, tolerance) if (api_parsed is not None and pdf_parsed is not None) else False,
                 )
             )
 
-    # Extended attribute coverage (50+ additional validations)
+    # Extended attribute coverage (50+ additional validations) - if present in PDF
     for ext_field in EXTENDED_FIELDS:
         api_raw = api_data.get(ext_field.name)
         pdf_raw = pdf_data.get(ext_field.name)
@@ -646,9 +688,6 @@ def validate_quote(config: AppConfig, api_data: Dict[str, Any], pdf_data: Dict[s
                 match=match,
             )
         )
-
-    # Line items (optional)
-    validate_line_items(config, api_data, pdf_data, results)
 
     matches = sum(1 for r in results if r.match)
     mismatches = len(results) - matches

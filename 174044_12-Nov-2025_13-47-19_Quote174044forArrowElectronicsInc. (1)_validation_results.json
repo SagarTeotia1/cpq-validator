@@ -1,70 +1,16 @@
 {
   "overall_status": "FAILED",
-  "total_checked": 49,
-  "matches": 48,
+  "total_checked": 47,
+  "matches": 46,
   "mismatches": 1,
   "transaction_id": "481931730",
   "pdf_filename": "174044_12-Nov-2025_13-47-19_Quote174044forArrowElectronicsInc. (1).xls",
   "details": [
     {
-      "field_name": "quoteNumber_t_c",
+      "field_name": "quoteNameTextArea_t_c",
       "section": "Header",
-      "expected": "174044",
-      "found": "Quote 174044 for Arrow Electronics Inc.",
-      "match": true,
-      "page": null,
-      "message": null
-    },
-    {
-      "field_name": "quoteNetPrice_t_c",
-      "section": "Summary",
-      "expected": 77390.93,
-      "found": 77390.93,
-      "match": true,
-      "page": null,
-      "message": null
-    },
-    {
-      "field_name": "quoteListPrice_t_c",
-      "section": "Summary",
-      "expected": 101880.85,
-      "found": 101880.85,
-      "match": true,
-      "page": null,
-      "message": null
-    },
-    {
-      "field_name": "extNetPrice_t_c",
-      "section": "Summary",
-      "expected": 77390.93,
-      "found": 77390.93,
-      "match": true,
-      "page": null,
-      "message": null
-    },
-    {
-      "field_name": "quoteDesiredNetPrice_t_c",
-      "section": "Summary",
-      "expected": 77390.93,
-      "found": 77390.93,
-      "match": true,
-      "page": null,
-      "message": null
-    },
-    {
-      "field_name": "quoteCurrentDiscount_t_c",
-      "section": "Summary",
-      "expected": 24.04,
-      "found": 24.04,
-      "match": true,
-      "page": null,
-      "message": null
-    },
-    {
-      "field_name": "status_t",
-      "section": "Header",
-      "expected": "Configured",
-      "found": "Configured",
+      "expected": "Quote 174044 for Arrow Electronics Inc.",
+      "found": "Quote 174044 for Arrow Electronics Inc. Quote 174044 for Arrow Electronics Inc. Quote 174044 for Arrow Electronics Inc.",
       "match": true,
       "page": null,
       "message": null
@@ -88,47 +34,11 @@
       "message": null
     },
     {
-      "field_name": "incoterm_t_c",
+      "field_name": "status_t",
       "section": "Header",
-      "expected": "EXW Laredo, TX",
-      "found": "EXW Laredo, TX",
+      "expected": "Configured",
+      "found": "Configured",
       "match": true,
-      "page": null,
-      "message": null
-    },
-    {
-      "field_name": "paymentTerms_t_c",
-      "section": "Header",
-      "expected": "0.5% 10, NET 30",
-      "found": "0.5% 10, NET 30",
-      "match": true,
-      "page": null,
-      "message": null
-    },
-    {
-      "field_name": "orderType_t_c",
-      "section": "Header",
-      "expected": "Standard",
-      "found": "Standard",
-      "match": true,
-      "page": null,
-      "message": null
-    },
-    {
-      "field_name": "quoteNameTextArea_t_c",
-      "section": "Header",
-      "expected": "Quote 174044 for Arrow Electronics Inc.",
-      "found": "Quote 174044 for Arrow Electronics Inc. Quote 174044 for Arrow Electronics Inc. Quote 174044 for Arrow Electronics Inc.",
-      "match": true,
-      "page": null,
-      "message": null
-    },
-    {
-      "field_name": "contractName_t",
-      "section": "Header",
-      "expected": "Agreement for 11/12 Arrow Electronics Inc.-Opp-201981123-Checking NA Reseller Login",
-      "found": "AVT Technology Solutions-Tech Data Government Solutions_MASTER Distributor Agmt",
-      "match": false,
       "page": null,
       "message": null
     },
@@ -443,6 +353,78 @@
       "section": "Lines",
       "expected": 1769.68,
       "found": 1769.68,
+      "match": true,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "quoteListPrice_t_c",
+      "section": "Grand Totals",
+      "expected": 101880.85,
+      "found": 101880.85,
+      "match": true,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "quoteCurrentDiscount_t_c",
+      "section": "Grand Totals",
+      "expected": 24.04,
+      "found": 24.04,
+      "match": true,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "quoteNetPrice_t_c",
+      "section": "Grand Totals",
+      "expected": 77390.93,
+      "found": 77390.93,
+      "match": true,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "incoterm_t_c",
+      "section": "Quote Information",
+      "expected": "EXW Laredo, TX",
+      "found": "EXW Laredo, TX",
+      "match": true,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "orderType_t_c",
+      "section": "Quote Information",
+      "expected": "Standard",
+      "found": "Standard",
+      "match": true,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "contractName_t",
+      "section": "Quote Information",
+      "expected": "Agreement for 11/12 Arrow Electronics Inc.-Opp-201981123-Checking NA Reseller Login",
+      "found": "AVT Technology Solutions-Tech Data Government Solutions_MASTER Distributor Agmt",
+      "match": false,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "paymentTerms_t_c",
+      "section": "Quote Information",
+      "expected": "0.5% 10, NET 30",
+      "found": "0.5% 10, NET 30",
+      "match": true,
+      "page": null,
+      "message": null
+    },
+    {
+      "field_name": "quoteNumber_t_c",
+      "section": "Quote Information",
+      "expected": "174044",
+      "found": "Quote 174044 for Arrow Electronics Inc.",
       "match": true,
       "page": null,
       "message": null
