@@ -110,6 +110,64 @@ def strings_close(a: Optional[str], b: Optional[str], *, threshold: float = 0.9)
     return ratio >= threshold
 
 
+def strings_contain_match(a: Optional[str], b: Optional[str], *, extract_numbers: bool = False) -> bool:
+    """Check if strings match by containment or by extracted numeric identifiers.
+    
+    This is useful for cases like:
+    - API: "174044" vs PDF: "174044 Quote 174044 for Arrow Electronics Inc." -> Match
+    - API: "CPQ-174044" vs PDF: "174044" -> Match (extract numbers)
+    - API: "Quote 174044" vs PDF: "174044" -> Match (extract numbers)
+    
+    Args:
+        a: First string (typically API value)
+        b: Second string (typically PDF value)
+        extract_numbers: If True, extract numeric identifiers and compare them
+    
+    Returns:
+        True if strings match by containment or extracted numbers match
+    """
+    if a is None or b is None:
+        return False
+    
+    na = str(a).strip()
+    nb = str(b).strip()
+    
+    if not na or not nb:
+        return False
+    
+    # Exact match (case-insensitive)
+    if na.lower() == nb.lower():
+        return True
+    
+    # Check if one contains the other (case-insensitive)
+    na_lower = na.lower()
+    nb_lower = nb.lower()
+    if na_lower in nb_lower or nb_lower in na_lower:
+        return True
+    
+    # If extract_numbers is True, extract numeric identifiers and compare
+    if extract_numbers:
+        # Extract all numeric sequences from both strings
+        a_numbers = re.findall(r'\d+', na)
+        b_numbers = re.findall(r'\d+', nb)
+        
+        # If both have numbers, check if any match
+        if a_numbers and b_numbers:
+            # Check if any number from a is in b, or vice versa
+            for num_a in a_numbers:
+                if num_a in b_numbers:
+                    return True
+            # Also check if the number appears in the other string
+            for num_a in a_numbers:
+                if num_a in nb:
+                    return True
+            for num_b in b_numbers:
+                if num_b in na:
+                    return True
+    
+    return False
+
+
 def only_digits(text: Optional[str]) -> Optional[str]:
     if text is None:
         return None
